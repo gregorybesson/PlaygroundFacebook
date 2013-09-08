@@ -36,7 +36,7 @@ class Module
             }
         });*/
 
-        // If AdfabGame is installed, I can add Fb apps to benefit from
+        // If PlaygroundGame is installed, I can add Fb apps to benefit from
         $e->getApplication()
         ->getEventManager()
         ->getSharedManager()
@@ -45,16 +45,16 @@ class Module
                 'populateAppIds'
         ));
 
-        // If AdfabGame is installed, I can check that TheFbAppId can be changed
+        // If PlaygroundGame is installed, I can check that TheFbAppId can be changed
         $e->getApplication()
         ->getEventManager()
         ->getSharedManager()
         ->attach(
             array(
-                'AdfabGame\Service\Lottery',
-                'AdfabGame\Service\PostVote',
-                'AdfabGame\Service\Quiz',
-                'AdfabGame\Service\InstantWin'
+                'PlaygroundGame\Service\Lottery',
+                'PlaygroundGame\Service\PostVote',
+                'PlaygroundGame\Service\Quiz',
+                'PlaygroundGame\Service\InstantWin'
             ),
             'edit.validate',
             array(
@@ -63,16 +63,16 @@ class Module
             )
         );
 
-        // If AdfabGame I can update the FB apps dynamically
+        // If PlaygroundGame I can update the FB apps dynamically
         $e->getApplication()
         ->getEventManager()
         ->getSharedManager()
         ->attach(
             array(
-                'AdfabGame\Service\Lottery',
-                'AdfabGame\Service\PostVote',
-                'AdfabGame\Service\Quiz',
-                'AdfabGame\Service\InstantWin'
+                'PlaygroundGame\Service\Lottery',
+                'PlaygroundGame\Service\PostVote',
+                'PlaygroundGame\Service\Quiz',
+                'PlaygroundGame\Service\InstantWin'
             ),
             array(
                 'create',
@@ -86,7 +86,7 @@ class Module
     }
 
     /**
-     * This method get the Fb apps and add them as array to AdfabGame form so
+     * This method get the Fb apps and add them as array to PlaygroundGame form so
      * that there is non adherence between modules...
      * not that satisfied neither
      *
