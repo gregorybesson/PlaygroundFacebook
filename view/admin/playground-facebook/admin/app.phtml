@@ -1,0 +1,27 @@
+<?php
+$form = $this->form;
+$form->prepare();
+?>
+
+<h1><?php echo $this->translate('Edit Appli'); ?></h1>
+
+<?php echo $this->form()->openTag($form) ?>
+<?php echo $this->formButton($form->get('submit')) ?>
+
+<div class="facebook-admin">
+    <?php echo $this->formHidden($form->get('id')); ?>
+        
+    <div class="label-input">
+        <?php echo $this->formLabel($form->get('appId')); ?>
+        <?php echo $this->formInput($form->get('appId')); ?>
+        <?php echo $this->formElementErrors($form->get('appId')) ?>
+    </div>
+    <div class="label-input">
+        <?php echo $this->formLabel($form->get('appSecret')); ?>
+        <?php echo $this->formInput($form->get('appSecret')); ?>
+        <?php echo $this->formElementErrors($form->get('appSecret')) ?>
+	</div>
+</div>
+    
+<?php echo $this->form()->closeTag() ?>
+

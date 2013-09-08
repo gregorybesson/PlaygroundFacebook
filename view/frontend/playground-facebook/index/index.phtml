@@ -1,0 +1,11 @@
+<div id="facebook">
+	<div class="row-fluid">
+		<h1>F.A.Q</h1>
+        <?php foreach($this->facebooks as $facebook):?>
+                <h3><a href="#" id="facebook-title-<?php echo $facebook->getId(); ?>"><?php echo $facebook->getQuestion(); ?></a></h3>
+        		<div id="facebook-content-<?php echo $facebook->getId(); ?>" class="content-block">
+        			<?php echo $facebook->getAnswer(); ?>
+        		</div>
+        <?php endforeach; ?>
+	</div>
+</div>

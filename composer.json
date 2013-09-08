@@ -1,0 +1,46 @@
+{
+	"name" : "playground/facebook",
+	"description" : "Playground Facebook Module",
+	"type" : "library",
+	"authors" : [{
+			"name" : "Greg Besson",
+			"email" : "gregory.besson@playground.gg",
+			"homepage" : "http://www.playground.gg"
+		}
+	],
+	"keywords" : [
+		"zf2",
+		"playground",
+		"Facebook"
+	],
+	"homepage" : "https://github.com/gregorybesson/PlaygroundFacebook",
+	"license" : [
+		"BSD-3-Clause"
+	],
+	"require" : {
+		"doctrine/doctrine-orm-module" : "*",
+		"zendframework/zend-stdlib" : "~2.1",
+		"facebook/php-sdk" : "3.*",
+		"php" : ">=5.3.3",
+		"zf-commons/zfc-base" : "0.*",
+		"zendframework/zend-mvc" : "~2.1",
+		"zendframework/zend-form" : "~2.1",
+		"zendframework/zend-loader" : "~2.1",
+		"zendframework/zend-servicemanager" : "~2.1",
+		"zendframework/zend-modulemanager" : "~2.1",
+		"zendframework/zend-stdlib" : "~2.1",
+		"doctrine/doctrine-orm-module" : "*",
+		"zf-commons/zfc-base" : "0.*",
+		"adfab/core" : "0.*",
+        "facebook/php-sdk" : "3.*"
+    }, 
+    "require-dev" : {
+		"phpunit/phpunit" : "3.7.*" 
+	},
+    "autoload" : {
+		"psr-0" : {
+			"PlaygroundFacebook" : "src/"
+		}
+	},
+	"minimum-stability" : "dev"
+}
