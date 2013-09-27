@@ -137,7 +137,6 @@ class AdminController extends AbstractActionController
     public function createAction()
     {
         $form = $this->getServiceLocator()->get('playgroundfacebook_app_form');
-        $form->get('submit')->setLabel('Créer');
         $form->setAttribute('action', $this->url()->fromRoute('admin/playgroundfacebook_admin_app/create', array('appId' => 0)));
         $form->setAttribute('method', 'post');
 
