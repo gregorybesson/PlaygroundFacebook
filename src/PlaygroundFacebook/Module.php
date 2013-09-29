@@ -25,17 +25,6 @@ class Module
             return;
         }
 
-        /*$eventManager->attach("dispatch", function($e) {
-            $session = new Container('facebook');
-            $fb = $e->getRequest()->getPost()->get('signed_request');
-            if ($fb) {
-                $session->offsetSet('signed_request',  $fb);
-                $viewModel = $e->getViewModel()->setTemplate('layout/facebook');
-            } elseif ($session->offsetExists('signed_request')) {
-                $viewModel = $e->getViewModel()->setTemplate('layout/facebook');
-            }
-        });*/
-
         // If PlaygroundGame is installed, I can add Fb apps to benefit from
         $e->getApplication()
         ->getEventManager()
