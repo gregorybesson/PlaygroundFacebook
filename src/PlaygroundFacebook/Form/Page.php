@@ -7,7 +7,7 @@ use Zend\Form\Element;
 use ZfcBase\Form\ProvidesEventsForm;
 use Zend\I18n\Translator\Translator;
 
-class App extends ProvidesEventsForm
+class Page extends ProvidesEventsForm
 {
     protected $userEditOptions;
     protected $userEntity;
@@ -26,26 +26,35 @@ class App extends ProvidesEventsForm
         ));
 
         $this->add(array(
-            'name' => 'appId',
+            'name' => 'pageId',
             'options' => array(
-                'label' => $translator->translate('Facebook app_id', 'playgroundfacebook'),
+                'label' => $translator->translate('Facebook page id', 'playgroundfacebook'),
             ),
         ));
 
         $this->add(array(
                 'type' => 'Zend\Form\Element\Select',
-                'name' => 'appIdRetrieved',
+                'name' => 'pageIdRetrieved',
                 'options' => array(
-                        'label' => $translator->translate('Facebook app_id retrieved', 'playgroundfacebook'),
+                        'label' => $translator->translate('Facebook page id retrieved', 'playgroundfacebook'),
                         'empty_option' => $translator->translate('Choose from the list below', 'playgroundfacebook'),
                 ),
         ));
 
         $this->add(array(
-            'name' => 'appSecret',
-            'options' => array(
-                'label' => $translator->translate('Facebook app_secret', 'playgroundfacebook'),
-            ),
+                'name' => 'pageName',
+                'type' => 'Zend\Form\Element\Hidden',
+                'attributes' => array(
+                        'value' => ''
+                )
+        ));
+
+        $this->add(array(
+                'name' => 'pageLink',
+                'type' => 'Zend\Form\Element\Hidden',
+                'attributes' => array(
+                        'value' => ''
+                )
         ));
 
         $submitElement = new Element\Button('submit');

@@ -26,5 +26,12 @@ return array(
     'Dynarea' => 'Zone cible',
     'Dynablocks' => 'Blocs dynamiques',
     'Available Dynareas' => 'Zone cible disponible',
+    'Facebook app_id' => 'Saisir un App ID Facebook',
+    'Facebook app_secret' => 'Facebook App Secret',
+    'Facebook app_id retrieved' => 'OU choisir l\'App ID suivant',
+    'Choose from the list below' => 'Choisir dans la liste',
+    'Add a Facebook page' => 'Ajouter une page Facebook',
+    'Facebook page id' => 'Saisir l\'id de la page Facebook',
+    'Facebook page id retrieved' => 'OU choisir la page suivante',
 
 );
