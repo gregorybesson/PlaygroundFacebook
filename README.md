@@ -1,4 +1,4 @@
-AdfabFacebook
-=============
+PlaygroundFacebook
+==================
 
-Module de Gestion des applications Facebook
+Module de gestion des applications et des pages Facebook

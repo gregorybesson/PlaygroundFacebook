@@ -1,5 +1,12 @@
 <?php $this->plugin('translate')->setTranslatorTextDomain('playgroundfacebook'); ?>
-
+<?php
+// TODO : refactor message display
+$fm = $this->flashMessenger()->setNamespace('playgroundfacebook')->getMessages();
+if (isset($fm[0]))
+{
+    echo '<span class="alert">' . $fm[0] . '</span>';
+}
+?>
 <ul class="liste-buttons">
 	<li class="btn-admin"><a href="<?php echo $this->url('admin/playgroundfacebook_admin_app/create');?>"><?php echo $this->translate('Ajouter une Appli Facebook'); ?></a></li>
 </ul>
