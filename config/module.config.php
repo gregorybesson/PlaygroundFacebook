@@ -30,17 +30,18 @@ return array(
     ),
 
     'view_manager' => array(
-        'template_map' => array(
+       'template_map' => array(
         ),
         'template_path_stack' => array(
-            __DIR__ . '/../view/admin',
-        	__DIR__ . '/../view/frontend',
+                __DIR__ . '/../view/frontend',
+                __DIR__ . '/../view/admin',
         ),
     ),
 
     'controllers' => array(
         'invokables' => array(
-            'playgroundfacebook_admin_app' => 'PlaygroundFacebook\Controller\App\AdminController',
+            'playgroundfacebook_admin_app' => 'PlaygroundFacebook\Controller\Admin\AppController', // 'PlaygroundFacebook\Controller\App\AdminController',
+            'playgroundfacebook_admin_page' => 'PlaygroundFacebook\Controller\Admin\PageController',
             'playgroundfacebook'       => 'PlaygroundFacebook\Controller\IndexController',
         ),
     ),
@@ -142,6 +143,87 @@ return array(
                             ),
                         ),
                     ),
+                    'playgroundfacebook_admin_page' => array(
+                                'type' => 'Literal',
+                                'priority' => 1000,
+                                'options' => array(
+                                        'route' => '/page',
+                                        'defaults' => array(
+                                                'controller' => 'playgroundfacebook_admin_page',
+                                                'action'     => 'index',
+                                        ),
+                                ),
+                                'child_routes' =>array(
+                                        'list' => array(
+                                                'type' => 'Segment',
+                                                'options' => array(
+                                                        'route' => '/list[/:p]',
+                                                        'defaults' => array(
+                                                                'controller' => 'playgroundfacebook_admin_page',
+                                                                'action'     => 'list',
+                                                        ),
+                                                ),
+                                        ),
+                                        'create' => array(
+                                                'type' => 'Segment',
+                                                'options' => array(
+                                                        'route' => '/create/:pageId',
+                                                        'defaults' => array(
+                                                                'controller' => 'playgroundfacebook_admin_page',
+                                                                'action'     => 'create',
+                                                                'pageId'     => 0
+                                                        ),
+                                                ),
+                                        ),
+                                        'edit' => array(
+                                                'type' => 'Segment',
+                                                'options' => array(
+                                                        'route' => '/edit/:pageId',
+                                                        'defaults' => array(
+                                                                'controller' => 'playgroundfacebook_admin_page',
+                                                                'action'     => 'edit',
+                                                                'pageId'     => 0
+                                                        ),
+                                                ),
+                                        ),
+                                        'remove' => array(
+                                                'type' => 'Segment',
+                                                'options' => array(
+                                                        'route' => '/remove/:pageId',
+                                                        'defaults' => array(
+                                                                'controller' => 'playgroundfacebook_admin_page',
+                                                                'action'     => 'remove',
+                                                                'pageId'     => 0
+                                                        ),
+                                                ),
+                                        ),
+
+                                        'install' => array(
+                                                'type' => 'Segment',
+                                                'options' => array(
+                                                        'route' => '/install/:appId',
+                                                        'defaults' => array(
+                                                                'controller' => 'playgroundfacebook_admin_app',
+                                                                'action'     => 'install',
+                                                                'appId'     => 0
+                                                        ),
+                                                ),
+                                        ),
+
+                                        'uninstall' => array(
+                                                'type' => 'Segment',
+                                                'options' => array(
+                                                        'route' => '/uninstall/:appId',
+                                                        'defaults' => array(
+                                                                'controller' => 'playgroundfacebook_admin_app',
+                                                                'action'     => 'uninstall',
+                                                                'appId'     => 0
+                                                        ),
+                                                ),
+                                        ),
+
+                                ),
+                        ),
                 ),
             ),
         ),
@@ -157,6 +239,9 @@ return array(
         		'playgroundfacebook_admin_app' => array(
         			'default_layout' => 'layout/admin',
        			),
+    	        'playgroundfacebook_admin_page' => array(
+    	                'default_layout' => 'layout/admin',
+    	        ),
         	),
         ),
     ),
@@ -168,7 +253,7 @@ return array(
                 'label' => 'Facebook',
                 'route' => 'admin/playgroundfacebook_admin_app/list',
                 'resource' => 'facebook',
-                'privilege' => 'list', 
+                'privilege' => 'list',
                 'pages' => array(
                     'list' => array(
                             'label' => 'Liste des Applis',
@@ -181,6 +266,18 @@ return array(
                         'route' => 'admin/playgroundfacebook_admin_app/create',
                         'resource' => 'facebook',
                         'privilege' => 'add',
+                    ),
+                    'list_pages' => array(
+                            'label' => 'Liste des Pages',
+                            'route' => 'admin/playgroundfacebook_admin_page/list',
+                            'resource' => 'facebook',
+                            'privilege' => 'list',
+                    ),
+                    'create_page' => array(
+                            'label' => 'Nouvelle Page',
+                            'route' => 'admin/playgroundfacebook_admin_page/create',
+                            'resource' => 'facebook',
+                            'privilege' => 'add',
                     ),
                 ),
             ),

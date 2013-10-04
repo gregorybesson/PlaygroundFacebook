@@ -450,6 +450,7 @@ class App implements InputFilterAwareInterface
             $factory = new InputFactory();
 
             $inputFilter->add($factory->createInput(array('name' => 'id', 'required' => true, 'filters' => array(array('name' => 'Int'),),)));
+            $inputFilter->add($factory->createInput(array('name' => 'appIdRetrieved', 'required' => false, 'filters' => array(array('name' => 'Int'),),)));
 
             $this->inputFilter = $inputFilter;
         }

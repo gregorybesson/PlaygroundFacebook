@@ -1,12 +1,12 @@
 <?php
 
-namespace PlaygroundFacebook\Controller\App;
+namespace PlaygroundFacebook\Controller\Admin; // PlaygroundFacebook\Controller\App;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use PlaygroundFacebook\Options\ModuleOptions;
 use Zend\View\Model\ViewModel;
 
-class AdminController extends AbstractActionController
+class AppController extends AbstractActionController
 {
     protected $options, $appMapper, $adminAppService;
 
@@ -35,14 +35,22 @@ class AdminController extends AbstractActionController
 
         $user = $facebookPtf->getUser();
 
+
         if ($user) {
             try {
+
+                $userFbAccounts = $facebookPtf->api('/me/accounts', 'GET');
+
+                $userFbApps = $facebookPtf->api('/me/applications/developer', 'GET');
+
                 $user_profile =  $facebookPtf->api('/me','GET');
                 $fbLogged = true;
+
                 $userAccessToken = $facebookPtf->getAccessToken();
                 $pageAccessToken = $facebookPtf->api('/'.$fbPage.'?fields=access_token', 'GET');
 
             } catch (FacebookApiException $e) {
+
                 $fbLoginUrl = $facebookPtf->getLoginUrl(array('scope' => 'manage_pages'));
                 //error_log($e->getType());
                 //error_log($e->getMessage());
@@ -51,6 +59,7 @@ class AdminController extends AbstractActionController
         } else {
             $fbLoginUrl = $facebookPtf->getLoginUrl(array('scope' => 'manage_pages'));
         }
+
 
         foreach ($apps as $app) {
             $line = array();
@@ -79,6 +88,7 @@ class AdminController extends AbstractActionController
                 $app_details['link'] = $this->url()->fromRoute('admin/playgroundfacebook_admin_app/remove', array('appId' => $app->getId()));
 
             }
+
             // Get informations from the Page. Logged user has to be admin of the page.
             if ($user) {
                 if (isset($pageAccessToken['access_token'])) {
@@ -100,6 +110,7 @@ class AdminController extends AbstractActionController
                         $app_details['is_installed']        = false;
                     }
                     $appMapper->update($app);
+
                 } else {
                     // Not enough right on the page admin
                     $fbAllowed = false;
@@ -115,6 +126,7 @@ class AdminController extends AbstractActionController
             $app_details['source_id']    = $app->getPageTabSourceId();
             $app_details['is_available'] = $app->getIsAvailable();
             $app_details['object_id']    = $app->getId();
+
             $FBApps[$app->getAppId()]    = $app_details;
         }
 
@@ -140,8 +152,63 @@ class AdminController extends AbstractActionController
         $form->setAttribute('action', $this->url()->fromRoute('admin/playgroundfacebook_admin_app/create', array('appId' => 0)));
         $form->setAttribute('method', 'post');
 
+        // Get the apps administered by the Facebook account (if admin user is connected to Facebook)
+
+        $config = $this->getAdminAppService()->getServiceManager()->get('config');
+        $appsFromFacebook = array();
+        if (isset($config['facebook'])) {
+            $appsFromFacebook = $this->getAdminAppService()->getAppsFromFacebookAccount($config['facebook']);
+        }
+
+        // Construct the select box options for app selection
+
+        $userFbAppsOptions = array();
+
+        if (isset($appsFromFacebook['apps_from_developer']) && sizeof($appsFromFacebook['apps_from_developer'])){
+            $tmpApps = array();
+            foreach ($appsFromFacebook['apps_from_developer'] as $app){
+                $tmpApps[$app['id']] = $app['id'] . ' - ' . $app['name'];
+            }
+            $userFbAppsOptions['apps_from_developper'] = array(
+                    'label' => 'Applications (developer)',
+                    'options' => $tmpApps
+                     );
+        }
+        if (isset($appsFromFacebook['apps_from_pages']) && sizeof($appsFromFacebook['apps_from_pages'])){
+            $tmpApps = array();
+            $previousPageId = $appsFromFacebook['apps_from_pages'][0]['page_id'];
+            $previousPageName = $appsFromFacebook['apps_from_pages'][0]['page_name'];
+            $isAdded = false;
+            foreach ($appsFromFacebook['apps_from_pages'] as $app){
+                if ($previousPageId != $app['page_id']){
+                    $userFbAppsOptions['page_'.$previousPageId] = array(
+                            'label' => 'Page ' . $previousPageName,
+                            'options' => $tmpApps
+                    );
+                    $previousPageId = $app['id'];
+                    $previousPageName = $app['name'];
+                    $tmpApps = array();
+                    $isAdded = true;
+                }
+                $tmpApps[$app['id']] = $app['id'] . ' - ' . $app['name'];
+            }
+            if (!$isAdded){
+                $userFbAppsOptions['page_'.$app['id']] = array(
+                        'label' => 'Page ' . $app['name'],
+                        'options' => $tmpApps
+                );
+            }
+        }
+
+        if (sizeof($userFbAppsOptions)){
+            $form->get('appIdRetrieved')->setValueOptions($userFbAppsOptions);
+        }
+
+
         $app = new \PlaygroundFacebook\Entity\App();
         $form->bind($app);
+
+        // Persist app into Playground
 
         $request = $this->getRequest();
 
@@ -155,10 +222,12 @@ class AdminController extends AbstractActionController
             }
         }
 
-        $viewModel = new ViewModel();
-        $viewModel->setTemplate('playground-facebook/admin/app');
+        // Display the creation form
 
-        return $viewModel->setVariables(array('form' => $form));
+        $viewModel = new ViewModel();
+        $viewModel->setTemplate('playground-facebook/app/edit');
+
+        return $viewModel->setVariables(array('form' => $form, 'isCreate' => true));
     }
 
     public function editAction()
@@ -182,10 +251,7 @@ class AdminController extends AbstractActionController
             }
         }
 
-        $viewModel = new ViewModel();
-        $viewModel->setTemplate('playground-facebook/admin/app');
-
-        return $viewModel->setVariables(array('form' => $form));
+        return array('form' => $form, 'isCreate' => false);
     }
 
     public function removeAction()

@@ -242,6 +242,7 @@ class Module
 
             'invokables' => array(
                 'playgroundfacebook_app_service' => 'PlaygroundFacebook\Service\App',
+                'playgroundfacebook_page_service' => 'PlaygroundFacebook\Service\Page',
             ),
 
             'factories' => array(
@@ -264,6 +265,21 @@ class Module
                     $form->setInputFilter($app->getInputFilter());
 
                     return $form;
+                },
+                'playgroundfacebook_page_mapper' => function ($sm) {
+                return new \PlaygroundFacebook\Mapper\Page(
+                        $sm->get('playgroundfacebook_doctrine_em'),
+                        $sm->get('playgroundfacebook_module_options')
+                );
+                },
+                'playgroundfacebook_page_form' => function($sm) {
+                $translator = $sm->get('translator');
+                $options = $sm->get('playgroundfacebook_module_options');
+                $form = new Form\Page(null, $translator);
+                $page = new Entity\Page();
+                $form->setInputFilter($page->getInputFilter());
+
+                return $form;
                 },
             ),
         );
