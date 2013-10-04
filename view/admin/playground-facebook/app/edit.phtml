@@ -3,7 +3,7 @@ $form = $this->form;
 $form->prepare();
 ?>
 
-<h1><?php echo $this->translate('Edit Appli'); ?></h1>
+<h1><?php $title = $this->isCreate ? $this->translate('Create Appli') : $this->translate('Edit Appli'); echo $title; ?></h1>
 
 <?php echo $this->form()->openTag($form) ?>
 <?php $form->get('submit')->setLabel($this->translate('Validate')); ?>
@@ -11,18 +11,25 @@ $form->prepare();
 
 <div class="facebook-admin">
     <?php echo $this->formHidden($form->get('id')); ?>
-        
+
     <div class="label-input">
         <?php echo $this->formLabel($form->get('appId')); ?>
         <?php echo $this->formInput($form->get('appId')); ?>
         <?php echo $this->formElementErrors($form->get('appId')) ?>
     </div>
+<?php if ($this->isCreate && sizeof($form->get('appIdRetrieved')->getValueOptions())): ?>
+    <div class="label-input">
+        <?php echo $this->formLabel($form->get('appIdRetrieved')); ?>
+        <?php echo $this->formSelect($form->get('appIdRetrieved')); ?>
+        <?php echo $this->formElementErrors($form->get('appIdRetrieved')) ?>
+    </div>
+<?php endif; ?>
     <div class="label-input">
         <?php echo $this->formLabel($form->get('appSecret')); ?>
         <?php echo $this->formInput($form->get('appSecret')); ?>
         <?php echo $this->formElementErrors($form->get('appSecret')) ?>
 	</div>
 </div>
-    
+
 <?php echo $this->form()->closeTag() ?>
 
