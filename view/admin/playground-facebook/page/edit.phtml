@@ -1,0 +1,34 @@
+<?php
+$form = $this->form;
+$form->prepare();
+?>
+
+<h1><?php $title = $this->isCreate ? $this->translate('Create page') : $this->translate('Edit page'); echo $title; ?></h1>
+
+<?php echo $this->form()->openTag($form) ?>
+<?php $form->get('submit')->setLabel($this->translate('Validate')); ?>
+<?php echo $this->formButton($form->get('submit')) ?>
+
+<div class="facebook-admin">
+    <?php echo $this->formHidden($form->get('id')); ?>
+
+    <div class="label-input">
+        <?php echo $this->formLabel($form->get('pageId')); ?>
+        <?php echo $this->formInput($form->get('pageId')); ?>
+        <?php echo $this->formElementErrors($form->get('pageId')) ?>
+    </div>
+<?php if ($this->isCreate && sizeof($form->get('pageIdRetrieved')->getValueOptions())): ?>
+    <div class="label-input">
+        <?php echo $this->formLabel($form->get('pageIdRetrieved')); ?>
+        <?php echo $this->formSelect($form->get('pageIdRetrieved')); ?>
+        <?php echo $this->formElementErrors($form->get('pageIdRetrieved')) ?>
+    </div>
+<?php endif; ?>
+
+<?php echo $this->formHidden($form->get('pageName')); ?>
+<?php echo $this->formHidden($form->get('pageLink')); ?>
+
+</div>
+
+<?php echo $this->form()->closeTag() ?>
+
