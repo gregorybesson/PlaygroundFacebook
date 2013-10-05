@@ -8,7 +8,7 @@ use Zend\View\Model\ViewModel;
 
 class AppController extends AbstractActionController
 {
-    protected $options, $appMapper, $adminAppService;
+    protected $options, $appMapper, $pageMapper, $adminAppService;
 
     public function listAction()
     {
@@ -18,12 +18,13 @@ class AppController extends AbstractActionController
             $platformFbAppSecret = $config['facebook']['fb_secret'];
             $fbPage              = $config['facebook']['fb_page'];
         }
-        $appMapper           = $this->getAppMapper();
-        $apps                = $appMapper->findAll();
-        $FBApps              = array();
-        $fbLogged            = false;
-        $fbAllowed           = false;
-        $fbLoginUrl          = '';
+        $appMapper   = $this->getAppMapper();
+        $apps        = $appMapper->findAll();
+        $FBApps      = array();
+        $fbLogged    = false;
+        $fbAllowed   = false;
+        $fbLoginUrl  = '';
+        $fbPages     = $this->getPageMapper()->findAll();
 
         $user = null;
         // Create our Application instance with the FB App associated with the plateform
@@ -85,7 +86,7 @@ class AppController extends AbstractActionController
                 $app_details['id'] = 'Cette application n\'existe plus. Vous devriez la supprimer';
                 $app_details['custom_name'] = '';
                 $app_details['logo'] = '';
-                $app_details['link'] = $this->url()->fromRoute('admin/playgroundfacebook_admin_app/remove', array('appId' => $app->getId()));
+                $app_details['link'] = $this->url()->fromRoute('admin/facebook/app/remove', array('appId' => $app->getId()));
 
             }
 
@@ -103,8 +104,8 @@ class AppController extends AbstractActionController
                         $app_details['is_installed']     = true;
                         $app_details['link']             = $tabExist['data'][0]['link'];
                         $app_details['position']         = $tabExist['data'][0]['position'];
-                        $app_details['custom_name']      = $tabExist['data'][0]['custom_name'];
-                        $app_details['custom_image_url'] = $tabExist['data'][0]['custom_image_url'];
+                        $app_details['custom_name']      = isset($tabExist['data'][0]['custom_name'])?$tabExist['data'][0]['custom_name']:'';
+                        $app_details['custom_image_url'] = isset($tabExist['data'][0]['custom_image_url'])?$tabExist['data'][0]['custom_image_url']:'';
                     } else {
                         $app->setIsInstalled(false);
                         $app_details['is_installed']        = false;
@@ -149,7 +150,7 @@ class AppController extends AbstractActionController
     public function createAction()
     {
         $form = $this->getServiceLocator()->get('playgroundfacebook_app_form');
-        $form->setAttribute('action', $this->url()->fromRoute('admin/playgroundfacebook_admin_app/create', array('appId' => 0)));
+        $form->setAttribute('action', $this->url()->fromRoute('admin/facebook/app/create', array('appId' => 0)));
         $form->setAttribute('method', 'post');
 
         // Get the apps administered by the Facebook account (if admin user is connected to Facebook)
@@ -170,9 +171,9 @@ class AppController extends AbstractActionController
                 $tmpApps[$app['id']] = $app['id'] . ' - ' . $app['name'];
             }
             $userFbAppsOptions['apps_from_developper'] = array(
-                    'label' => 'Applications (developer)',
-                    'options' => $tmpApps
-                     );
+                'label' => 'Applications (developer)',
+                'options' => $tmpApps
+            );
         }
         if (isset($appsFromFacebook['apps_from_pages']) && sizeof($appsFromFacebook['apps_from_pages'])){
             $tmpApps = array();
@@ -180,17 +181,20 @@ class AppController extends AbstractActionController
             $previousPageName = $appsFromFacebook['apps_from_pages'][0]['page_name'];
             $isAdded = false;
             foreach ($appsFromFacebook['apps_from_pages'] as $app){
-                if ($previousPageId != $app['page_id']){
-                    $userFbAppsOptions['page_'.$previousPageId] = array(
-                            'label' => 'Page ' . $previousPageName,
-                            'options' => $tmpApps
-                    );
-                    $previousPageId = $app['id'];
-                    $previousPageName = $app['name'];
-                    $tmpApps = array();
-                    $isAdded = true;
+                
+                if(isset($app['id'])){
+                    if ($previousPageId != $app['page_id']){
+                        $userFbAppsOptions['page_'.$previousPageId] = array(
+                                'label' => 'Page ' . $previousPageName,
+                                'options' => $tmpApps
+                        );
+                        $previousPageId = $app['id'];
+                        $previousPageName = $app['name'];
+                        $tmpApps = array();
+                        $isAdded = true;
+                    }
+                    $tmpApps[$app['id']] = $app['id'] . ' - ' . $app['name'];
                 }
-                $tmpApps[$app['id']] = $app['id'] . ' - ' . $app['name'];
             }
             if (!$isAdded){
                 $userFbAppsOptions['page_'.$app['id']] = array(
@@ -218,7 +222,7 @@ class AppController extends AbstractActionController
             if ($app) {
                 $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('L\'appli FB a été créée');
 
-                return $this->redirect()->toRoute('admin/playgroundfacebook_admin_app/list');
+                return $this->redirect()->toRoute('admin/facebook/app/list');
             }
         }
 
@@ -235,7 +239,7 @@ class AppController extends AbstractActionController
         $appId = $this->getEvent()->getRouteMatch()->getParam('appId');
         $app = $this->getAppMapper()->findById($appId);
         $form = $this->getServiceLocator()->get('playgroundfacebook_app_form');
-        $form->setAttribute('action', $this->url()->fromRoute('admin/playgroundfacebook_admin_app/edit', array('appId' => $appId)));
+        $form->setAttribute('action', $this->url()->fromRoute('admin/facebook/app/edit', array('appId' => $appId)));
         $form->setAttribute('method', 'post');
 
         $form->bind($app);
@@ -247,7 +251,7 @@ class AppController extends AbstractActionController
             if ($app) {
                 $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('La Appli a été créée');
 
-                return $this->redirect()->toRoute('admin/playgroundfacebook_admin_app/list');
+                return $this->redirect()->toRoute('admin/facebook/app/list');
             }
         }
 
@@ -263,7 +267,7 @@ class AppController extends AbstractActionController
             $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('Appli supprimée');
         }
 
-        return $this->redirect()->toRoute('admin/playgroundfacebook_admin_app/list');
+        return $this->redirect()->toRoute('admin/facebook/app/list');
     }
 
     public function installAction()
@@ -338,7 +342,7 @@ class AppController extends AbstractActionController
             return $this->redirect()->toUrl($loginUrl);
         }
 
-        return $this->redirect()->toRoute('admin/playgroundfacebook_admin_app/list');
+        return $this->redirect()->toRoute('admin/facebook/app/list');
     }
 
     public function uninstallAction()
@@ -393,7 +397,7 @@ class AppController extends AbstractActionController
             return $this->redirect()->toUrl($loginUrl);
         }
 
-        return $this->redirect()->toRoute('admin/playgroundfacebook_admin_app/list');
+        return $this->redirect()->toRoute('admin/facebook/app/list');
     }
 
     public function setOptions(ModuleOptions $options)
@@ -425,6 +429,22 @@ class AppController extends AbstractActionController
     {
         $this->appMapper = $appMapper;
 
+        return $this;
+    }
+    
+    public function getPageMapper()
+    {
+        if (null === $this->pageMapper) {
+            $this->pageMapper = $this->getServiceLocator()->get('playgroundfacebook_page_mapper');
+        }
+    
+        return $this->pageMapper;
+    }
+    
+    public function setPageMapper(PageMapperInterface $pageMapper)
+    {
+        $this->pageMapper = $pageMapper;
+    
         return $this;
     }
 

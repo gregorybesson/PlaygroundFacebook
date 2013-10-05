@@ -8,10 +8,10 @@ if (isset($fm[0]))
 }
 ?>
 <ul class="liste-buttons">
-	<li class="btn-admin"><a href="<?php echo $this->url('admin/playgroundfacebook_admin_app/create');?>"><?php echo $this->translate('Ajouter une Appli Facebook'); ?></a></li>
+	<li class="btn-admin"><a href="<?php echo $this->url('admin/facebook/app/create');?>"><?php echo $this->translate('Ajouter une Appli Facebook'); ?></a></li>
 </ul>
 
-<h1>Liste des applis</h1>
+<h1>Liste de vos applis Facebook</h1>
 
 <?php if(!$this->fbLogged):?>
     Vous n'êtes pas loggé à Facebook ou vous ne possédez pas les droits d'administration sur les applis et pages gérées ici.
@@ -33,10 +33,10 @@ if (isset($fm[0]))
         <th></th>
     </tr>
     <?php foreach ($this->apps as $app): ?>
-        <?php $installLink = $this->url('admin/playgroundfacebook_admin_app/install', array('appId' => $app['object_id']));?>
-        <?php $uninstallLink = $this->url('admin/playgroundfacebook_admin_app/uninstall', array('appId' => $app['object_id']));?>
-        <?php $editLink = $this->url('admin/playgroundfacebook_admin_app/edit', array('appId' => $app['object_id']));?>
-        <?php $deleteLink = $this->url('admin/playgroundfacebook_admin_app/remove', array('appId' => $app['object_id']));?>
+        <?php $installLink = $this->url('admin/facebook/app/install', array('appId' => $app['object_id']));?>
+        <?php $uninstallLink = $this->url('admin/facebook/app/uninstall', array('appId' => $app['object_id']));?>
+        <?php $editLink = $this->url('admin/facebook/app/edit', array('appId' => $app['object_id']));?>
+        <?php $deleteLink = $this->url('admin/facebook/app/remove', array('appId' => $app['object_id']));?>
         <tr>
             <td><?php echo $app['id'] ?></td>
             <td><a href="<?php echo $app['link'] ?>" target="_blank"><?php echo $app['name'] ?></a></td>
@@ -67,7 +67,7 @@ if (isset($fm[0]))
 </table>
 
 <ul class="liste-buttons bottom">
-	<li class="btn-admin bottom"><a href="<?php echo $this->url('admin/playgroundfacebook_admin_app/create');?>"><?php echo $this->translate('Ajouter une Appli Facebook'); ?></a></li>
+	<li class="btn-admin bottom"><a href="<?php echo $this->url('admin/facebook/app/create');?>"><?php echo $this->translate('Ajouter une Appli Facebook'); ?></a></li>
 </ul>
 
 <?php //echo $this->paginationControl($this->apps, 'Sliding', 'playground-facebook/admin/pagination_applist.phtml'); ?>
