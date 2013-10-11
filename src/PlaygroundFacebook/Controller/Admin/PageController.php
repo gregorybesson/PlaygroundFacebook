@@ -30,20 +30,18 @@ class PageController extends AbstractActionController
 
         // Create our Application instance with the FB App associated with the plateform
         $facebookPtf = new \Facebook(array(
-                'appId' => $platformFbAppId,
-                'secret' => $platformFbAppSecret,
-                'cookie' => false,
+            'appId' => $platformFbAppId,
+            'secret' => $platformFbAppSecret,
+            'cookie' => false,
         ));
 
         $user = $facebookPtf->getUser();
 
-        foreach ($pages as $page) {
-
-            // Retrieve and update information about registered pages (if admin user is connected to Facebook)
-
-            if ($user){
-
-                $fbLogged = true;
+        // Retrieve and update information about registered pages (if admin user is connected to Facebook)
+        
+        if ($user){
+            $fbLogged = true;
+            foreach ($pages as $page) {
 
                 $page_info = $this->getAdminPageService()->getPageInfoFromFacebookAccount( array('pageId' => $page->getPageId()));
 
@@ -53,15 +51,11 @@ class PageController extends AbstractActionController
                 if (isset($page_info['pageLink'])){
                     $page->setPageLink($page_info['pageLink']);
                 }
-
                 $pageMapper->update($page);
-
-            } else {
-                $fbLoginUrl = $facebookPtf->getLoginUrl(array('scope' => 'manage_pages'));
+                $pages_array[] = $page->getArrayCopy();
             }
-
-            $pages_array[] = $page->getArrayCopy();
-
+        } else {
+            $fbLoginUrl = $facebookPtf->getLoginUrl(array('scope' => 'manage_pages'));
         }
 
         if (is_array($pages_array)) {
@@ -83,7 +77,7 @@ class PageController extends AbstractActionController
     public function createAction()
     {
         $form = $this->getServiceLocator()->get('playgroundfacebook_page_form');
-        $form->setAttribute('action', $this->url()->fromRoute('admin/playgroundfacebook_admin_page/create', array('pageId' => 0)));
+        $form->setAttribute('action', $this->url()->fromRoute('admin/facebook/page/create', array('pageId' => 0)));
         $form->setAttribute('method', 'post');
 
         // Get the pages administred by the Facebook user (if admin is connected to Facebook)
@@ -108,13 +102,11 @@ class PageController extends AbstractActionController
         $form->bind($page);
 
         // Persist the page in Playground, and redirect to the list of pages
-
         $request = $this->getRequest();
 
         if ($request->isPost()) {
 
             $data = $request->getPost()->toArray();
-
             // Get more information about the page, from Facebook (if admin user is connected to Facebook)
 
             $data_extended = $this->getAdminPageService()->getPageInfoFromFacebookAccount($data);
@@ -122,7 +114,7 @@ class PageController extends AbstractActionController
             $page = $this->getAdminPageService()->create($data_extended, $page);
             if ($page) {
                 $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('La page Facebook a été importée');
-                return $this->redirect()->toRoute('admin/playgroundfacebook_admin_page/list');
+                return $this->redirect()->toRoute('admin/facebook/page/list');
             }
         }
 
@@ -139,7 +131,7 @@ class PageController extends AbstractActionController
         $pageId = $this->getEvent()->getRouteMatch()->getParam('pageId');
         $page = $this->getPageMapper()->findById($pageId);
         $form = $this->getServiceLocator()->get('playgroundfacebook_page_form');
-        $form->setAttribute('action', $this->url()->fromRoute('admin/playgroundfacebook_admin_page/edit', array('pageId' => $pageId)));
+        $form->setAttribute('action', $this->url()->fromRoute('admin/facebook/page/edit', array('pageId' => $pageId)));
         $form->setAttribute('method', 'post');
 
         $form->bind($page);
@@ -156,7 +148,7 @@ class PageController extends AbstractActionController
             if ($page) {
                 $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('La page a été éditée');
 
-                return $this->redirect()->toRoute('admin/playgroundfacebook_admin_page/list');
+                return $this->redirect()->toRoute('admin/facebook/page/list');
             }
         }
 
@@ -172,7 +164,7 @@ class PageController extends AbstractActionController
             $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('Page supprimée');
         }
 
-        return $this->redirect()->toRoute('admin/playgroundfacebook_admin_page/list');
+        return $this->redirect()->toRoute('admin/facebook/page/list');
     }
 
     public function setOptions(ModuleOptions $options)

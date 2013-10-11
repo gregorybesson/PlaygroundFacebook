@@ -32,6 +32,11 @@ class App implements InputFilterAwareInterface
     protected $appId;
 
     /**
+     * @ORM\Column(name="app_name", type="string", length=255, unique=true, nullable=true)
+     */
+    protected $appName;
+
+    /**
      * @ORM\Column(name="app_secret", type="string", length=255, nullable=false)
      */
     protected $appSecret;
@@ -150,6 +155,25 @@ class App implements InputFilterAwareInterface
     public function getAppId()
     {
         return $this->appId;
+    }
+
+    /**
+     * @param $appName
+     * @return App
+     */
+    public function setAppName($appName)
+    {
+        $this->appName = $appName;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAppName()
+    {
+        return $this->appName;
     }
 
     /**
