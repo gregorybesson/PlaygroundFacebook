@@ -92,7 +92,14 @@ class Module
         $apps = $appService->getAvailableApps();
 
         foreach ($apps as $app) {
-            $appsArray[$app->getAppId()] = $app->getAppId();
+            $app_label = '';
+            if ($app->getAppName()){
+                $app_label .= $app->getAppName();
+            }
+            if ($app->getAppId()){
+                $app_label .= ' ('.$app->getAppId().')';
+            }
+            $appsArray[$app->getAppId()] = $app_label;
         }
 
         return $appsArray;
