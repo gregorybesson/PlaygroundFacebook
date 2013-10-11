@@ -35,6 +35,9 @@ class App extends ProvidesEventsForm
         $this->add(array(
                 'type' => 'Zend\Form\Element\Select',
                 'name' => 'appIdRetrieved',
+                'attributes' =>  array(
+                    'id' => 'appIdRetrieved',
+                ),
                 'options' => array(
                         'label' => $translator->translate('Facebook app_id retrieved', 'playgroundfacebook'),
                         'empty_option' => $translator->translate('Choose from the list below', 'playgroundfacebook'),

@@ -15,6 +15,11 @@ class ModuleOptions
     protected $pageEntityClass = 'PlaygroundFacebook\Entity\Page';
 
     /**
+     * @var string
+     */
+    protected $appPageEntityClass = 'PlaygroundFacebook\Entity\AppPage';
+
+    /**
      * @var bool
      */
     protected $enableDefaultEntities = true;
@@ -22,6 +27,8 @@ class ModuleOptions
     protected $appMapper = 'PlaygroundFacebook\Mapper\App';
 
     protected $pageMapper = 'PlaygroundFacebook\Mapper\Page';
+
+    protected $appPageMapper = 'PlaygroundFacebook\Mapper\AppPage';
 
     /**
      * Turn off strict options mode
@@ -46,6 +53,16 @@ class ModuleOptions
     public function getPageMapper()
     {
         return $this->pageMapper;
+    }
+
+    public function setAppPageMapper($appPageMapper)
+    {
+        $this->appPageMapper = $appPageMapper;
+    }
+
+    public function getAppPageMapper()
+    {
+        return $this->appPageMapper;
     }
 
     /**
@@ -92,6 +109,29 @@ class ModuleOptions
     public function getPageEntityClass()
     {
         return $this->pageEntityClass;
+    }
+
+    /**
+     * set app-page entity class name
+     *
+     * @param  string        $appEntityClass
+     * @return ModuleOptions
+     */
+    public function setAppPageEntityClass($appPageEntityClass)
+    {
+        $this->appPageEntityClass = $appPageEntityClass;
+
+        return $this;
+    }
+
+    /**
+     * get app-page entity class name
+     *
+     * @return string
+     */
+    public function getAppPageEntityClass()
+    {
+        return $this->appPageEntityClass;
     }
 
     /**

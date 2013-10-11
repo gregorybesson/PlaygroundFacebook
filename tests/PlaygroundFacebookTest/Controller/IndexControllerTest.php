@@ -21,4 +21,5 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
     {
     	$this->assertTrue(true);
     }
+
 }

@@ -8,7 +8,7 @@ if (isset($fm[0]))
 }
 ?>
 <ul class="liste-buttons">
-	<li class="btn-admin"><a href="<?php echo $this->url('admin/playgroundfacebook_admin_page/create');?>"><?php echo $this->translate('Ajouter une page Facebook'); ?></a></li>
+	<li class="btn-admin"><a href="<?php echo $this->url('admin/facebook/page/create');?>"><?php echo $this->translate('Ajouter une page Facebook'); ?></a></li>
 </ul>
 
 <h1>Liste des pages</h1>
@@ -22,32 +22,25 @@ if (isset($fm[0]))
         <th><?php echo $this->translate('Page Id'); ?></th>
         <th><?php echo $this->translate('Page Name'); ?></th>
         <th><?php echo $this->translate('Disponible'); ?></th>
-        <?php if($this->fbLogged):?>
-            <th><?php echo $this->translate('Installée'); ?></th>
-        <?php endif;?>
         <th></th>
     </tr>
     <?php foreach ($this->pages as $page): ?>
-        <?php $installLink = $this->url('admin/playgroundfacebook_admin_page/install', array('pageId' => $page['id']));?>
-        <?php $uninstallLink = $this->url('admin/playgroundfacebook_admin_page/uninstall', array('pageId' => $page['id']));?>
-        <?php $editLink = $this->url('admin/playgroundfacebook_admin_page/edit', array('pageId' => $page['id']));?>
-        <?php $deleteLink = $this->url('admin/playgroundfacebook_admin_page/remove', array('pageId' => $page['id']));?>
+        <?php $installLink = $this->url('admin/facebook/page/install', array('pageId' => $page['id']));?>
+        <?php $uninstallLink = $this->url('admin/facebook/page/uninstall', array('pageId' => $page['id']));?>
+        <?php $deleteLink = $this->url('admin/facebook/page/remove', array('pageId' => $page['id']));?>
         <tr>
             <td><?php echo $page['pageId'] ?></td>
             <td><a href="<?php echo $page['pageLink'] ?>" target="_blank"><?php echo $page['pageName'] ?></a></td>
             <td><?php echo ($page['isAvailable'])? 'Oui':'Non'; ?></td>
-           <?php if($this->fbLogged && $this->fbAllowed):?>
-                <td><?php echo ($page['isInstalled'])? 'Oui':'Non'; ?></td>
-            <?php endif;?>
             <td>
-                <a href='<?php echo $editLink ?>'><?php echo $this->translate('Edit'); ?></a> | <a href='<?php echo $deleteLink ?>'><?php echo $this->translate('Delete'); ?></a>
+                <a href='<?php echo $deleteLink ?>'><?php echo $this->translate('Delete'); ?></a>
             </td>
         </tr>
     <?php endforeach; ?>
 </table>
 
 <ul class="liste-buttons bottom">
-	<li class="btn-admin bottom"><a href="<?php echo $this->url('admin/playgroundfacebook_admin_page/create');?>"><?php echo $this->translate('Ajouter une page Facebook'); ?></a></li>
+	<li class="btn-admin bottom"><a href="<?php echo $this->url('admin/facebook/page/create');?>"><?php echo $this->translate('Ajouter une page Facebook'); ?></a></li>
 </ul>
 
 <?php //echo $this->paginationControl($this->apps, 'Sliding', 'playground-facebook/admin/pagination_applist.phtml'); ?>

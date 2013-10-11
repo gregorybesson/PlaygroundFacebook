@@ -33,3 +33,9 @@ $form->prepare();
 
 <?php echo $this->form()->closeTag() ?>
 
+<script>
+$("#appIdRetrieved").change(function() {
+    window.open('https://developers.facebook.com/apps/'+$("select option:selected").val(),'_blank','',false)
+  //open window https://developers.facebook.com/apps/414761728645581
+});
+</script>
