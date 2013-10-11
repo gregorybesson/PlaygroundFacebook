@@ -81,6 +81,13 @@ class AppController extends AbstractActionController
                         'access_token' => $accessToken
                     )
                 );
+
+                // Persist the app name into the database
+                if (isset($app_details['name'])){
+                    $app->setAppName($app_details['name']);
+                    $appMapper->update($app);
+                }
+
             } catch (\FacebookApiException $e) {
                 $app_details['name'] = 'N/A';
                 $app_details['id'] = 'Cette application n\'existe plus. Vous devriez la supprimer';
@@ -181,7 +188,7 @@ class AppController extends AbstractActionController
             $previousPageName = $appsFromFacebook['apps_from_pages'][0]['page_name'];
             $isAdded = false;
             foreach ($appsFromFacebook['apps_from_pages'] as $app){
-                
+
                 if(isset($app['id'])){
                     if ($previousPageId != $app['page_id']){
                         $userFbAppsOptions['page_'.$previousPageId] = array(
@@ -431,20 +438,20 @@ class AppController extends AbstractActionController
 
         return $this;
     }
-    
+
     public function getPageMapper()
     {
         if (null === $this->pageMapper) {
             $this->pageMapper = $this->getServiceLocator()->get('playgroundfacebook_page_mapper');
         }
-    
+
         return $this->pageMapper;
     }
-    
+
     public function setPageMapper(PageMapperInterface $pageMapper)
     {
         $this->pageMapper = $pageMapper;
-    
+
         return $this;
     }
 
