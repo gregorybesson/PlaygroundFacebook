@@ -5,10 +5,11 @@ namespace PlaygroundFacebook\Controller\Admin; // PlaygroundFacebook\Controller\
 use Zend\Mvc\Controller\AbstractActionController;
 use PlaygroundFacebook\Options\ModuleOptions;
 use Zend\View\Model\ViewModel;
+use Zend\Stdlib\Hydrator\ClassMethods;
 
 class AppController extends AbstractActionController
 {
-    protected $options, $appMapper, $pageMapper, $adminAppService;
+    protected $options, $appMapper, $pageMapper, $appPageMapper, $adminAppService, $adminPageService;
 
     public function listAction()
     {
@@ -95,6 +96,22 @@ class AppController extends AbstractActionController
                 $app_details['logo'] = '';
                 $app_details['link'] = $this->url()->fromRoute('admin/facebook/app/remove', array('appId' => $app->getId()));
 
+            }
+
+            // Get pages linked to the apps
+
+            $app_details['has_page'] = false;
+            $app_details['page_name'] = '';
+
+            $app_pages = $this->getAdminAppService()->getPagesForApp($app);
+
+            if (is_array($app_pages) && sizeof($app_pages)){
+                $app_details['has_page'] = true;
+                // TEMP : only one page per app
+                foreach ($app_pages as $app_page){
+                    $page = $this->getPageMapper()->findById($app_page->getIdPage());
+                    $app_details['page_name'] = $page->getPageName();
+                }
             }
 
             // Get informations from the Page. Logged user has to be admin of the page.
@@ -233,7 +250,7 @@ class AppController extends AbstractActionController
             }
         }
 
-        // Display the creation form
+        // Render creation form
 
         $viewModel = new ViewModel();
         $viewModel->setTemplate('playground-facebook/app/edit');
@@ -277,6 +294,108 @@ class AppController extends AbstractActionController
         return $this->redirect()->toRoute('admin/facebook/app/list');
     }
 
+    public function preinstallAction()
+    {
+
+        // Get global Facebook configuration
+
+        $config = $this->getAdminAppService()->getServiceManager()->get('config');
+        if (isset($config['facebook'])) {
+            $platformFbAppId     = $config['facebook']['fb_appid'];
+            $platformFbAppSecret = $config['facebook']['fb_secret'];
+            $fbPage              = $config['facebook']['fb_page'];
+        }
+
+        // Get the app FB id
+
+        $app = null;
+        $appName = '';
+
+        $appId = $this->getEvent()->getRouteMatch()->getParam('appId');
+        if ($appId){
+            $app = $this->getAppMapper()->findById($appId);
+            $appName = $app->getAppName();
+        }
+
+
+        // Get the pages administred by the Facebook user (if admin is connected to Facebook)
+
+        $pages = $this->getPageMapper()->findAll();
+
+        // Construct the form for page selection
+
+        $form = $this->getServiceLocator()->get('playgroundfacebook_app_page_form');
+        $form->setAttribute('action', $this->url()->fromRoute('admin/facebook/app/preinstall'));
+        $form->setAttribute('method', 'post');
+
+        $form->get('idApp')->setValue($appId);
+
+        $html_options = array();
+        foreach ($pages as $page){
+            $html_options[$page->getId()] = $page->getPageName();
+        }
+        if (sizeof($html_options)){
+            $form->get('idPage')->setValueOptions($html_options);
+        }
+
+        // Persist into Playground
+
+        $request = $this->getRequest();
+
+        if ($request->isPost()) {
+
+            $form = $this->getServiceLocator()->get('playgroundfacebook_app_page_form');
+
+            $data = $request->getPost()->toArray();
+            $app_page = new \PlaygroundFacebook\Entity\AppPage();
+
+            $form->setHydrator(new ClassMethods());
+            $form->bind($app_page);
+            $form->setData($data);
+
+            if (isset($data['idApp'])){
+                $app = $this->getAppMapper()->findById($data['idApp']);
+                $appId = $app->getId();
+                $appName = $app->getAppName();
+            }
+
+            if ($form->isValid()) {
+
+                // Remove all pages linked to app
+                // TODO: move this logic away from here
+
+                $previous_app_pages = $this->getAdminAppService()->getPagesForApp($app);
+
+                if (is_array($previous_app_pages) && sizeof($previous_app_pages)){
+                    foreach ($previous_app_pages as $previous_app_page){
+                        $page = $this->getPageMapper()->remove($previous_app_page);
+                    }
+                }
+
+                if ($app_page->getIdPage()){
+
+                    $app_page = $this->getAppPageMapper()->insert($app_page);
+
+                    if ($app_page) {
+                        $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('La page FB a été sélectionnée');
+                    } else {
+                        $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('Une erreur est survenue.');
+                    }
+                    return $this->redirect()->toRoute('admin/facebook/app/list');
+
+                } else {
+                    $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('Vous devez sélectionner une page.');
+                    return $this->redirect()->toRoute('admin/facebook/app/preinstall', array('appId' => $appId));
+                }
+            }
+
+        }
+
+        // Render form
+
+        return array('appName' => $appName, 'form' => $form);
+    }
+
     public function installAction()
     {
         $config = $this->getAdminAppService()->getServiceManager()->get('config');
@@ -288,6 +407,18 @@ class AppController extends AbstractActionController
 
         $appId = $this->getEvent()->getRouteMatch()->getParam('appId');
         $app = $this->getAppMapper()->findById($appId);
+
+        // Overwrite platform FB page with FB page associated to the app
+
+        $app_pages = $this->getAdminAppService()->getPagesForApp($app);
+
+        if (is_array($app_pages) && sizeof($app_pages)){
+            // TEMP : only one page per app
+            foreach ($app_pages as $app_page){
+                $page = $this->getPageMapper()->findById($app_page->getIdPage());
+                $fbPage = $page->getPageId();
+            }
+        }
 
         $user = null;
          // Create our Application instance with the FB App associated with the plateform
@@ -358,11 +489,23 @@ class AppController extends AbstractActionController
         if (isset($config['facebook'])) {
             $platformFbAppId     = $config['facebook']['fb_appid'];
             $platformFbAppSecret = $config['facebook']['fb_secret'];
-            $fbPage              = $config['facebook']['fb_page'];
+//             $fbPage              = $config['facebook']['fb_page'];
         }
 
         $appId = $this->getEvent()->getRouteMatch()->getParam('appId');
         $app = $this->getAppMapper()->findById($appId);
+
+        // Overwrite platform FB page with FB page associated to the app
+
+        $app_pages = $this->getAdminAppService()->getPagesForApp($app);
+
+        if (is_array($app_pages) && sizeof($app_pages)){
+            // TEMP : only one page per app
+            foreach ($app_pages as $app_page){
+                $page = $this->getPageMapper()->findById($app_page->getIdPage());
+                $fbPage = $page->getPageId();
+            }
+        }
 
         $user = null;
         // Create our Application instance with the FB App associated with the plateform
@@ -455,6 +598,22 @@ class AppController extends AbstractActionController
         return $this;
     }
 
+    public function getAppPageMapper()
+    {
+        if (null === $this->appPageMapper) {
+            $this->appPageMapper = $this->getServiceLocator()->get('playgroundfacebook_app_page_mapper');
+        }
+
+        return $this->appPageMapper;
+    }
+
+    public function setAppPageMapper(AppPageMapperInterface $appPageMapper)
+    {
+        $this->appPageMapper = $appPageMapper;
+
+        return $this;
+    }
+
     public function getAdminAppService()
     {
         if (null === $this->adminAppService) {
@@ -467,6 +626,22 @@ class AppController extends AbstractActionController
     public function setAdminAppService($service)
     {
         $this->adminAppService = $service;
+
+        return $this;
+    }
+
+    public function getAdminPageService()
+    {
+        if (null === $this->adminPageService) {
+            $this->adminPageService = $this->getServiceLocator()->get('playgroundfacebook_page_service');
+        }
+
+        return $this->adminPageService;
+    }
+
+    public function setAdminPageService($service)
+    {
+        $this->adminPageService = $service;
 
         return $this;
     }

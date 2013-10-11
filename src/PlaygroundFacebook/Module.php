@@ -288,6 +288,21 @@ class Module
 
                 return $form;
                 },
+                'playgroundfacebook_app_page_mapper' => function ($sm) {
+                return new \PlaygroundFacebook\Mapper\AppPage(
+                        $sm->get('playgroundfacebook_doctrine_em'),
+                        $sm->get('playgroundfacebook_module_options')
+                );
+                },
+                'playgroundfacebook_app_page_form' => function($sm) {
+                $translator = $sm->get('translator');
+                $options = $sm->get('playgroundfacebook_module_options');
+                $form = new Form\AppPage(null, $translator);
+                $appPage = new Entity\AppPage();
+                $form->setInputFilter($appPage->getInputFilter());
+
+                return $form;
+                },
             ),
         );
     }

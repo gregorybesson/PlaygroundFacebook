@@ -22,9 +22,6 @@ if (isset($fm[0]))
         <th><?php echo $this->translate('Page Id'); ?></th>
         <th><?php echo $this->translate('Page Name'); ?></th>
         <th><?php echo $this->translate('Disponible'); ?></th>
-        <?php if($this->fbLogged):?>
-            <th><?php echo $this->translate('Installée'); ?></th>
-        <?php endif;?>
         <th></th>
     </tr>
     <?php foreach ($this->pages as $page): ?>
@@ -35,9 +32,6 @@ if (isset($fm[0]))
             <td><?php echo $page['pageId'] ?></td>
             <td><a href="<?php echo $page['pageLink'] ?>" target="_blank"><?php echo $page['pageName'] ?></a></td>
             <td><?php echo ($page['isAvailable'])? 'Oui':'Non'; ?></td>
-           <?php if($this->fbLogged && $this->fbAllowed):?>
-                <td><?php echo ($page['isInstalled'])? 'Oui':'Non'; ?></td>
-            <?php endif;?>
             <td>
                 <a href='<?php echo $deleteLink ?>'><?php echo $this->translate('Delete'); ?></a>
             </td>
