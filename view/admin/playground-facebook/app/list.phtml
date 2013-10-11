@@ -27,12 +27,14 @@ if (isset($fm[0]))
         <th><?php echo $this->translate('Contenu'); ?></th>
         <?php if($this->fbLogged):?>
             <th><?php echo $this->translate('Installée'); ?></th>
+            <th><?php echo $this->translate('Page FB'); ?></th>
             <th><?php echo $this->translate('Titre'); ?></th>
             <th><?php echo $this->translate('Logo'); ?></th>
         <?php endif;?>
         <th></th>
     </tr>
     <?php foreach ($this->apps as $app): ?>
+        <?php $preinstallLink = $this->url('admin/facebook/app/preinstall', array('appId' => $app['object_id']));?>
         <?php $installLink = $this->url('admin/facebook/app/install', array('appId' => $app['object_id']));?>
         <?php $uninstallLink = $this->url('admin/facebook/app/uninstall', array('appId' => $app['object_id']));?>
         <?php $editLink = $this->url('admin/facebook/app/edit', array('appId' => $app['object_id']));?>
@@ -46,12 +48,21 @@ if (isset($fm[0]))
             <td><?php echo $app['source_type'] . ' - ' . $app['source_title'] ?></td>
             <?php if($this->fbLogged && $this->fbAllowed):?>
                 <td><?php echo ($app['is_installed'])? 'Oui':'Non'; ?></td>
+                <td><?php echo ($app['has_page'])? $app['page_name'] : '-'; ?></td>
                 <td><a href="<?php echo $app['link']?>" target="_blank"><?php echo (isset($app['custom_name']))? $app['custom_name']:''; ?></a></td>
                 <td><?php if(isset($app['custom_image_url'])):?><img src="<?php echo $app['custom_image_url']; ?>"/><?php endif;?></td>
             <?php endif;?>
             <td>
                 <?php if($this->fbAllowed):?>
                     <?php if(!$app['is_installed'] && !$app['is_available']):?>
+                        <?php if($app['has_page']):?>
+                        <a href='<?php echo $preinstallLink ?>'><?php echo $this->translate('Changer la page FB'); ?></a>
+                        <?php else:?>
+                        <a href='<?php echo $preinstallLink ?>'><?php echo $this->translate('Choisir la page FB'); ?></a>
+                        <?php endif;?>
+                        |
+                    <?php endif;?>
+                    <?php if(!$app['is_installed'] && !$app['is_available'] && $app['has_page']):?>
                         <a href='<?php echo $installLink ?>'><?php echo $this->translate('Installer sur la page FB'); ?></a>
                         |
                     <?php endif;?>
