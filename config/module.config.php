@@ -7,7 +7,7 @@ return array(
                 'cache' => 'array',
                 'paths' => __DIR__ . '/../src/PlaygroundFacebook/Entity'
             ),
-            
+
             'orm_default' => array(
                 'drivers' => array(
                     'PlaygroundFacebook\Entity' => 'playgroundfacebook_entity'
@@ -15,7 +15,7 @@ return array(
             )
         )
     ),
-    
+
     'translator' => array(
         'locale' => 'fr_FR',
         'translation_file_patterns' => array(
@@ -27,7 +27,7 @@ return array(
             )
         )
     ),
-    
+
     'view_manager' => array(
         'template_map' => array(),
         'template_path_stack' => array(
@@ -35,7 +35,7 @@ return array(
             __DIR__ . '/../view/admin'
         )
     ),
-    
+
     'controllers' => array(
         'invokables' => array(
             'playgroundfacebook_admin_app' => 'PlaygroundFacebook\Controller\Admin\AppController',
@@ -43,7 +43,7 @@ return array(
             'playgroundfacebook' => 'PlaygroundFacebook\Controller\IndexController'
         )
     ),
-    
+
     'router' => array(
         'routes' => array(
             'frontend' => array(
@@ -126,18 +126,29 @@ return array(
                                             )
                                         )
                                     ),
-                                    'install' => array(
+                                    'preinstall' => array(
                                         'type' => 'Segment',
                                         'options' => array(
-                                            'route' => '/install/:appId',
+                                            'route' => '/preinstall/:appId',
                                             'defaults' => array(
                                                 'controller' => 'playgroundfacebook_admin_app',
-                                                'action' => 'install',
+                                                'action' => 'preinstall',
                                                 'appId' => 0
                                             )
                                         )
                                     ),
-                                    
+                                    'install' => array(
+                                            'type' => 'Segment',
+                                            'options' => array(
+                                                    'route' => '/install/:appId',
+                                                    'defaults' => array(
+                                                            'controller' => 'playgroundfacebook_admin_app',
+                                                            'action' => 'install',
+                                                            'appId' => 0
+                                                    )
+                                            )
+                                    ),
+
                                     'uninstall' => array(
                                         'type' => 'Segment',
                                         'options' => array(
@@ -204,7 +215,7 @@ return array(
                                             )
                                         )
                                     ),
-                                    
+
                                     'install' => array(
                                         'type' => 'Segment',
                                         'options' => array(
@@ -216,7 +227,7 @@ return array(
                                             )
                                         )
                                     ),
-                                    
+
                                     'uninstall' => array(
                                         'type' => 'Segment',
                                         'options' => array(
@@ -236,7 +247,7 @@ return array(
             )
         )
     ),
-    
+
     'core_layout' => array(
         'PlaygroundFacebook' => array(
             'default_layout' => 'layout/2columns-left',
@@ -253,7 +264,7 @@ return array(
             )
         )
     ),
-    
+
     'navigation' => array(
         'admin' => array(
             'playgroundfacebookadmin' => array(

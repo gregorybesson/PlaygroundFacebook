@@ -33,5 +33,6 @@ return array(
     'Add a Facebook page' => 'Ajouter une page Facebook',
     'Facebook page id' => 'Saisir l\'id de la page Facebook',
     'Facebook page id retrieved' => 'choisir la page suivante',
-
+    'App name' => 'Application FB',
+    'Publish into page' => 'Publier dans la page FB',
 );
