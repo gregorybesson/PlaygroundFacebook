@@ -16,7 +16,17 @@ class Module
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
+        $options = $serviceManager->get('playgroundcore_module_options');
         $translator = $serviceManager->get('translator');
+        $locale = $options->getLocale();
+        if (!empty($locale)) {
+            //translator
+            $translator->setLocale($locale);
+
+            // plugins
+            $translate = $serviceManager->get('viewhelpermanager')->get('translate');
+            $translate->getTranslator()->setLocale($locale);
+        }
         AbstractValidator::setDefaultTranslator($translator,'playgroundcore');
 
         // If cron is called, the $e->getRequest()->getPost() produces an error so I protect it with
