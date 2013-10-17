@@ -23,11 +23,22 @@ $form->prepare();
         <?php echo $this->formSelect($form->get('appIdRetrieved')); ?>
         <?php echo $this->formElementErrors($form->get('appIdRetrieved')) ?>
     </div>
+<?php else: ?>
+    <div class="label-input">
+        <?php echo $this->formLabel($form->get('appName')); ?>
+        <?php echo $this->formInput($form->get('appName')); ?>
+        <?php echo $this->formElementErrors($form->get('appName')) ?>
+    </div>
 <?php endif; ?>
     <div class="label-input">
         <?php echo $this->formLabel($form->get('appSecret')); ?>
         <?php echo $this->formInput($form->get('appSecret')); ?>
         <?php echo $this->formElementErrors($form->get('appSecret')) ?>
+	</div>
+	<div class="label-input">
+        <?php echo $this->formLabel($form->get('pages')); ?>
+        <?php echo $this->formMultiCheckbox($form->get('pages')); ?>
+        <?php echo $this->formElementErrors($form->get('pages')) ?>
 	</div>
 </div>
 

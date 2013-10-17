@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\ORM\Mapping\PreUpdate;
+use Doctrine\Common\Collections\ArrayCollection;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\Factory as InputFactory;
 use Zend\InputFilter\InputFilterAwareInterface;
@@ -25,6 +26,12 @@ class App implements InputFilterAwareInterface
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Page", mappedBy="apps")
+     *
+     **/
+    protected $pages;
 
     /**
      * @ORM\Column(name="app_id", type="string", length=255, unique=true, nullable=false)
@@ -105,6 +112,11 @@ class App implements InputFilterAwareInterface
      * @ORM\Column(name="updated_at", type="datetime")
      */
     protected $updatedAt;
+
+    public function __construct()
+    {
+        $this->pages = new ArrayCollection();
+    }
 
     /** @PrePersist */
     public function createChrono()
@@ -451,6 +463,79 @@ class App implements InputFilterAwareInterface
     }
 
     /**
+     * @return Doctrine\ORM\PersistentCollection
+     */
+    public function getPages()
+    {
+        return $this->pages;
+    }
+
+    /**
+     * frm collection solution
+     * @param unknown_type $pages
+     */
+    public function setPages(ArrayCollection $pages)
+    {
+        $this->pages = $pages;
+
+        return $this;
+    }
+
+    /**
+     * Add pages to the app.
+     *
+     * @param ArrayCollection $pages
+     *
+     * @return void
+     */
+    public function addPages(ArrayCollection $pages)
+    {
+        foreach ($pages as $page) {
+            $page->addApp($this);
+            $this->pages->add($page);
+        }
+    }
+
+    /**
+     * Remove pages from the app.
+     *
+     * @param ArrayCollection $pages
+     *
+     * @return void
+     */
+    public function removePages(ArrayCollection $pages)
+    {
+        foreach ($pages as $page) {
+            $page->removeApp($this);
+            $this->pages->removeElement($page);
+        }
+    }
+
+    /**
+     * Add a single page to the app.
+     *
+     * @param Page $page
+     *
+     * @return void
+     */
+    public function addPage($page)
+    {
+        $this->pages[] = $page;
+    }
+
+    /**
+     * Remove a single page from the app.
+     *
+     * @param Page $page
+     *
+     * @return void
+     */
+    public function removePage($page)
+    {
+        $this->pages->removeElement($page);
+    }
+
+    /**
      * Populate from an array.
      *
      * @param array $data
@@ -475,6 +560,7 @@ class App implements InputFilterAwareInterface
 
             $inputFilter->add($factory->createInput(array('name' => 'id', 'required' => true, 'filters' => array(array('name' => 'Int'),),)));
             $inputFilter->add($factory->createInput(array('name' => 'appIdRetrieved', 'required' => false, 'filters' => array(array('name' => 'Int'),),)));
+            $inputFilter->add($factory->createInput(array('name' => 'pages', 'required' => false)));
 
             $this->inputFilter = $inputFilter;
         }

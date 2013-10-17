@@ -18,8 +18,7 @@ class PageController extends AbstractActionController
             $platformFbAppSecret = $config['facebook']['fb_secret'];
         }
 
-        $pageMapper          = $this->getPageMapper();
-        $pages               = $pageMapper->findAll();
+        $pages               = $this->getPageMapper()->findAll();
         $fbPages             = array();
         $fbLogged            = false;
         $fbAllowed           = false;
@@ -38,8 +37,9 @@ class PageController extends AbstractActionController
         $user = $facebookPtf->getUser();
 
         // Retrieve and update information about registered pages (if admin user is connected to Facebook)
-        
+
         if ($user){
+
             $fbLogged = true;
             foreach ($pages as $page) {
 
@@ -51,11 +51,21 @@ class PageController extends AbstractActionController
                 if (isset($page_info['pageLink'])){
                     $page->setPageLink($page_info['pageLink']);
                 }
-                $pageMapper->update($page);
-                $pages_array[] = $page->getArrayCopy();
+                $this->getPageMapper()->update($page);
+
             }
+
+            $pages = $this->getPageMapper()->findAll();
+
+        // Build Facebook login URL (if admin user is not connected to Facebook)
+
         } else {
+
             $fbLoginUrl = $facebookPtf->getLoginUrl(array('scope' => 'manage_pages'));
+        }
+
+        foreach ($pages as $page){
+            $pages_array[] = $page->getArrayCopy();
         }
 
         if (is_array($pages_array)) {

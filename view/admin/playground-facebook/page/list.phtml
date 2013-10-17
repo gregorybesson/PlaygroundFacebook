@@ -25,14 +25,14 @@ if (isset($fm[0]))
         <th></th>
     </tr>
     <?php foreach ($this->pages as $page): ?>
-        <?php $installLink = $this->url('admin/facebook/page/install', array('pageId' => $page['id']));?>
-        <?php $uninstallLink = $this->url('admin/facebook/page/uninstall', array('pageId' => $page['id']));?>
+        <?php $editLink = $this->url('admin/facebook/page/edit', array('pageId' => $page['id']));?>
         <?php $deleteLink = $this->url('admin/facebook/page/remove', array('pageId' => $page['id']));?>
         <tr>
             <td><?php echo $page['pageId'] ?></td>
             <td><a href="<?php echo $page['pageLink'] ?>" target="_blank"><?php echo $page['pageName'] ?></a></td>
             <td><?php echo ($page['isAvailable'])? 'Oui':'Non'; ?></td>
-            <td>
+           <td>
+                <a href='<?php echo $editLink ?>'><?php echo $this->translate('Edit'); ?></a>                |
                 <a href='<?php echo $deleteLink ?>'><?php echo $this->translate('Delete'); ?></a>
             </td>
         </tr>
