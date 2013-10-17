@@ -10,6 +10,7 @@ $form->prepare();
 <?php echo $this->formButton($form->get('submit')) ?>
 
 <div class="facebook-admin">
+
     <?php echo $this->formHidden($form->get('id')); ?>
 
     <?php if ($this->isCreate && sizeof($form->get('pageIdRetrieved')->getValueOptions())): ?>
@@ -19,6 +20,29 @@ $form->prepare();
             <?php echo $this->formElementErrors($form->get('pageIdRetrieved')) ?>
         </div>
     <?php endif; ?>
+    <?php if (!$this->isCreate): ?>
+        <div class="label-input">
+            <?php echo $this->formLabel($form->get('pageId')); ?>
+            <?php echo $this->formInput($form->get('pageId')); ?>
+            <?php echo $this->formElementErrors($form->get('pageId')) ?>
+        </div>
+        <div class="label-input">
+            <?php echo $this->formLabel($form->get('pageName')); ?>
+            <?php echo $this->formInput($form->get('pageName')); ?>
+            <?php echo $this->formElementErrors($form->get('pageName')) ?>
+        </div>
+        <div class="label-input">
+            <?php echo $this->formLabel($form->get('pageLink')); ?>
+            <?php echo $this->formInput($form->get('pageLink')); ?>
+            <?php echo $this->formElementErrors($form->get('pageLink')) ?>
+        </div>
+    <?php endif; ?>
+			<div class="label-input">
+	            <?php echo $this->formLabel($form->get('apps')); ?>
+	            <?php echo $this->formMultiCheckbox($form->get('apps')); ?>
+	            <?php echo $this->formElementErrors($form->get('apps')) ?>
+			</div>
+
 
 <?php echo $this->formHidden($form->get('pageName')); ?>
 <?php echo $this->formHidden($form->get('pageLink')); ?>

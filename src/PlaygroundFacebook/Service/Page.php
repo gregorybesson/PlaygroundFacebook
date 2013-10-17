@@ -4,7 +4,7 @@ namespace PlaygroundFacebook\Service;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\ServiceManager\ServiceManager;
 use ZfcBase\EventManager\EventProvider;
-use Zend\Stdlib\Hydrator\ClassMethods;
+// use Zend\Stdlib\Hydrator\ClassMethods;
 use PlaygroundFacebook\Options\ModuleOptions;
 
 class Page extends EventProvider implements ServiceManagerAwareInterface
@@ -41,7 +41,7 @@ class Page extends EventProvider implements ServiceManagerAwareInterface
         }
 
         $form = $this->getServiceManager()->get('playgroundfacebook_page_form');
-        $form->setHydrator(new ClassMethods());
+//         $form->setHydrator(new ClassMethods());
         $form->bind($page);
         $form->setData($data);
 
@@ -87,7 +87,12 @@ class Page extends EventProvider implements ServiceManagerAwareInterface
         $pageId = $data['pageId'];
 
         $form = $this->getServiceManager()->get('playgroundfacebook_page_form');
-        $form->setHydrator(new ClassMethods());
+//         $form->setHydrator(new ClassMethods());
+
+        if (!isset($data['apps'])){
+            $data['apps'] = array();
+        }
+
         $form->bind($page);
         $form->setData($data);
 

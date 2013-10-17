@@ -4,7 +4,7 @@ namespace PlaygroundFacebook\Service;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\ServiceManager\ServiceManager;
 use ZfcBase\EventManager\EventProvider;
-use Zend\Stdlib\Hydrator\ClassMethods;
+// use Zend\Stdlib\Hydrator\ClassMethods;
 use PlaygroundFacebook\Options\ModuleOptions;
 
 class App extends EventProvider implements ServiceManagerAwareInterface
@@ -15,12 +15,6 @@ class App extends EventProvider implements ServiceManagerAwareInterface
      * @var AppMapperInterface
      */
     protected $appMapper;
-
-    /**
-     *
-     * @var AppPageMapperInterface
-     */
-    protected $appPageMapper;
 
     /**
      *
@@ -47,7 +41,7 @@ class App extends EventProvider implements ServiceManagerAwareInterface
         }
 
         $form = $this->getServiceManager()->get('playgroundfacebook_app_form');
-        $form->setHydrator(new ClassMethods());
+//         $form->setHydrator(new ClassMethods());
         $form->bind($app);
         $form->setData($data);
 
@@ -79,8 +73,13 @@ class App extends EventProvider implements ServiceManagerAwareInterface
     public function edit(array $data, $app)
     {
         $form = $this->getServiceManager()->get('playgroundfacebook_app_form');
-        $form->setHydrator(new ClassMethods());
+//         $form->setHydrator(new ClassMethods());
         $form->bind($app);
+
+        if (!isset($data['pages'])){
+            $data['pages'] = array();
+        }
+
         $form->setData($data);
 
         $facebook = new \Facebook(array(
@@ -111,24 +110,6 @@ class App extends EventProvider implements ServiceManagerAwareInterface
     public function remove($app)
     {
         return $this->getAppMapper()->remove($app);
-    }
-
-    /**
-     * getPagesForApp
-     *
-     * @return Array of PlaygroundFacebook\Entity\AppPage
-     */
-    public function getPagesForApp($app)
-    {
-        if ($app){
-            $id_app = $app->getId();
-            if ($id_app){
-                return $this->getAppPageMapper()->findBy(array('idApp' => $id_app));
-            }
-        }
-
-        return false;
-
     }
 
     /**
@@ -253,35 +234,6 @@ class App extends EventProvider implements ServiceManagerAwareInterface
 
         return $this;
     }
-
-    /**
-     * setAppPageMapper
-     *
-     * @param AppMapperInterface $appMapper
-     * @return App
-     */
-    public function setAppPageMapper(AppPageMapperInterface $appPageMapper)
-    {
-        $this->appPageMapper = $appPageMapper;
-
-        return $this;
-    }
-
-    /**
-     * getAppPageMapper
-     *
-     * @return AppPageMapperInterface
-     */
-    public function getAppPageMapper()
-    {
-        if (null === $this->appPageMapper) {
-            $this->appPageMapper = $this->getServiceManager()->get('playgroundfacebook_app_page_mapper');
-        }
-
-        return $this->appPageMapper;
-    }
-
-
 
     public function setOptions(ModuleOptions $options)
     {
