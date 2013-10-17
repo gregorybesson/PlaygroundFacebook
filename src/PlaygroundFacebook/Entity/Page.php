@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\ORM\Mapping\PreUpdate;
+use Doctrine\Common\Collections\ArrayCollection;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\Factory as InputFactory;
 use Zend\InputFilter\InputFilterAwareInterface;
@@ -25,6 +26,15 @@ class Page implements InputFilterAwareInterface
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App", inversedBy="pages", cascade={"persist"})
+     * @ORM\JoinTable(name="facebook_page_app",
+     *      joinColumns={@ORM\JoinColumn(name="page_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="app_id", referencedColumnName="id")}
+     *      )
+     */
+    private $apps;
 
     /**
      * @ORM\Column(name="page_id", type="string", length=255, unique=true, nullable=false)
@@ -60,6 +70,11 @@ class Page implements InputFilterAwareInterface
      * @ORM\Column(name="updated_at", type="datetime")
      */
     protected $updatedAt;
+
+    public function __construct()
+    {
+        $this->apps = new ArrayCollection();
+    }
 
     /** @PrePersist */
     public function createChrono()
@@ -227,6 +242,79 @@ class Page implements InputFilterAwareInterface
     }
 
     /**
+     * @return Doctrine\ORM\PersistentCollection
+     */
+    public function getApps()
+    {
+        return $this->apps;
+    }
+
+    /**
+     * frm collection solution
+     * @param unknown_type $apps
+     */
+    public function setApps(ArrayCollection $apps)
+    {
+        $this->apps = $apps;
+
+        return $this;
+    }
+
+    /**
+     * Add apps to the page.
+     *
+     * @param ArrayCollection $apps
+     *
+     * @return void
+     */
+    public function addApps(ArrayCollection $apps)
+    {
+        foreach ($apps as $app) {
+            $app->addPage($this);
+            $this->apps->add($app);
+        }
+    }
+
+    /**
+     * Remove apps from the page.
+     *
+     * @param ArrayCollection $apps
+     *
+     * @return void
+     */
+    public function removeApps(ArrayCollection $apps)
+    {
+        foreach ($apps as $app) {
+            $app->removePage($this);
+            $this->apps->removeElement($app);
+        }
+    }
+
+    /**
+     * Add a single app to the page.
+     *
+     * @param App $app
+     *
+     * @return void
+     */
+    public function addApp($app)
+    {
+        $this->apps[] = $app;
+    }
+
+    /**
+     * Remove a single app from the page.
+     *
+     * @param App $app
+     *
+     * @return void
+     */
+    public function removeApp($app)
+    {
+        $this->apps->removeElement($app);
+    }
+
+    /**
      * Convert the object to an array.
      *
      * @return array
@@ -262,6 +350,7 @@ class Page implements InputFilterAwareInterface
 
             $inputFilter->add($factory->createInput(array('name' => 'id', 'required' => true, 'filters' => array(array('name' => 'Int'),),)));
             $inputFilter->add($factory->createInput(array('name' => 'pageIdRetrieved', 'required' => false, 'filters' => array(array('name' => 'Int'),),)));
+            $inputFilter->add($factory->createInput(array('name' => 'apps', 'required' => false)));
 
             $this->inputFilter = $inputFilter;
         }

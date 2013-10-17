@@ -98,20 +98,15 @@ class AppController extends AbstractActionController
 
             }
 
-            // Get pages linked to the apps
+            // Get pages linked to the app
 
-            $app_details['has_page'] = false;
-            $app_details['page_name'] = '';
+            $app_details['has_pages'] = false;
+            $app_details['pages_number'] = '';
 
-            $app_pages = $this->getAdminAppService()->getPagesForApp($app);
-
-            if (is_array($app_pages) && sizeof($app_pages)){
-                $app_details['has_page'] = true;
-                // TEMP : only one page per app
-                foreach ($app_pages as $app_page){
-                    $page = $this->getPageMapper()->findById($app_page->getIdPage());
-                    $app_details['page_name'] = $page->getPageName();
-                }
+            $pages = $app->getPages()->toArray();
+            if (is_array($pages) && sizeof($pages)){
+                $app_details['has_pages'] = true;
+                $app_details['pages_number'] = sizeof($pages);
             }
 
             // Get informations from the Page. Logged user has to be admin of the page.
@@ -271,9 +266,10 @@ class AppController extends AbstractActionController
 
         if ($request->isPost()) {
             $data = $request->getPost()->toArray();
+
             $app = $this->getAdminAppService()->edit($data, $app);
             if ($app) {
-                $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('La Appli a été créée');
+                $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('L\' Appli a été créée');
 
                 return $this->redirect()->toRoute('admin/facebook/app/list');
             }
@@ -294,107 +290,6 @@ class AppController extends AbstractActionController
         return $this->redirect()->toRoute('admin/facebook/app/list');
     }
 
-    public function preinstallAction()
-    {
-
-        // Get global Facebook configuration
-
-        $config = $this->getAdminAppService()->getServiceManager()->get('config');
-        if (isset($config['facebook'])) {
-            $platformFbAppId     = $config['facebook']['fb_appid'];
-            $platformFbAppSecret = $config['facebook']['fb_secret'];
-            $fbPage              = $config['facebook']['fb_page'];
-        }
-
-        // Get the app FB id
-
-        $app = null;
-        $appName = '';
-
-        $appId = $this->getEvent()->getRouteMatch()->getParam('appId');
-        if ($appId){
-            $app = $this->getAppMapper()->findById($appId);
-            $appName = $app->getAppName();
-        }
-
-
-        // Get the pages administred by the Facebook user (if admin is connected to Facebook)
-
-        $pages = $this->getPageMapper()->findAll();
-
-        // Construct the form for page selection
-
-        $form = $this->getServiceLocator()->get('playgroundfacebook_app_page_form');
-        $form->setAttribute('action', $this->url()->fromRoute('admin/facebook/app/preinstall'));
-        $form->setAttribute('method', 'post');
-
-        $form->get('idApp')->setValue($appId);
-
-        $html_options = array();
-        foreach ($pages as $page){
-            $html_options[$page->getId()] = $page->getPageName();
-        }
-        if (sizeof($html_options)){
-            $form->get('idPage')->setValueOptions($html_options);
-        }
-
-        // Persist into Playground
-
-        $request = $this->getRequest();
-
-        if ($request->isPost()) {
-
-            $form = $this->getServiceLocator()->get('playgroundfacebook_app_page_form');
-
-            $data = $request->getPost()->toArray();
-            $app_page = new \PlaygroundFacebook\Entity\AppPage();
-
-            $form->setHydrator(new ClassMethods());
-            $form->bind($app_page);
-            $form->setData($data);
-
-            if (isset($data['idApp'])){
-                $app = $this->getAppMapper()->findById($data['idApp']);
-                $appId = $app->getId();
-                $appName = $app->getAppName();
-            }
-
-            if ($form->isValid()) {
-
-                // Remove all pages linked to app
-                // TODO: move this logic away from here
-
-                $previous_app_pages = $this->getAdminAppService()->getPagesForApp($app);
-
-                if (is_array($previous_app_pages) && sizeof($previous_app_pages)){
-                    foreach ($previous_app_pages as $previous_app_page){
-                        $page = $this->getPageMapper()->remove($previous_app_page);
-                    }
-                }
-
-                if ($app_page->getIdPage()){
-
-                    $app_page = $this->getAppPageMapper()->insert($app_page);
-
-                    if ($app_page) {
-                        $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('La page FB a été sélectionnée');
-                    } else {
-                        $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('Une erreur est survenue.');
-                    }
-                    return $this->redirect()->toRoute('admin/facebook/app/list');
-
-                } else {
-                    $this->flashMessenger()->setNamespace('playgroundfacebook')->addMessage('Vous devez sélectionner une page.');
-                    return $this->redirect()->toRoute('admin/facebook/app/preinstall', array('appId' => $appId));
-                }
-            }
-
-        }
-
-        // Render form
-
-        return array('appName' => $appName, 'form' => $form);
-    }
 
     public function installAction()
     {
@@ -402,23 +297,12 @@ class AppController extends AbstractActionController
         if (isset($config['facebook'])) {
             $platformFbAppId     = $config['facebook']['fb_appid'];
             $platformFbAppSecret = $config['facebook']['fb_secret'];
-            $fbPage              = $config['facebook']['fb_page'];
+//             $fbPage              = $config['facebook']['fb_page'];
         }
 
         $appId = $this->getEvent()->getRouteMatch()->getParam('appId');
         $app = $this->getAppMapper()->findById($appId);
 
-        // Overwrite platform FB page with FB page associated to the app
-
-        $app_pages = $this->getAdminAppService()->getPagesForApp($app);
-
-        if (is_array($app_pages) && sizeof($app_pages)){
-            // TEMP : only one page per app
-            foreach ($app_pages as $app_page){
-                $page = $this->getPageMapper()->findById($app_page->getIdPage());
-                $fbPage = $page->getPageId();
-            }
-        }
 
         $user = null;
          // Create our Application instance with the FB App associated with the plateform
@@ -432,44 +316,62 @@ class AppController extends AbstractActionController
         $user = $facebook->getUser();
 
         if ($user) {
+
             $userAccessToken = $facebook->getAccessToken();
-            $pageAccessToken = $facebook->api('/'.$fbPage.'?fields=access_token', 'GET');
 
-            // Check that the app is correctly installed on the page
-            $tabExist = $facebook->api('/'.$fbPage.'/tabs/'.$app->getAppId(), 'GET', array(
-                'access_token'=> $pageAccessToken['access_token']
-            ));
+            // For each FB page associated to the app :
 
-            if (!$tabExist['data']) {
-                // Install the Page Tab App on a page
-                $install = $facebook->api('/'.$fbPage.'/tabs', 'POST', array(
-                        'app_id'=> $app->getAppId(),
-                        'access_token'=> $pageAccessToken['access_token']
-                ));
+            $pages = $app->getPages()->toArray();
 
-                // Check that the app is correctly installed on the page
-                $tabExist = $facebook->api('/'.$fbPage.'/tabs/'.$app->getAppId(), 'GET', array(
-                    'access_token'=> $pageAccessToken['access_token']
-                ));
+            if (is_array($pages) && sizeof($pages)){
+                foreach ($pages as $page){
+
+                    $fbPage = $page->getPageId();
+
+                    $pageAccessToken = $facebook->api('/'.$fbPage.'?fields=access_token', 'GET');
+
+                    // Check that the app is correctly installed on the page
+                    $tabExist = $facebook->api('/'.$fbPage.'/tabs/'.$app->getAppId(), 'GET', array(
+                            'access_token'=> $pageAccessToken['access_token']
+                    ));
+
+                    if (!$tabExist['data']) {
+                        // Install the Page Tab App on a page
+                        $install = $facebook->api('/'.$fbPage.'/tabs', 'POST', array(
+                                'app_id'=> $app->getAppId(),
+                                'access_token'=> $pageAccessToken['access_token']
+                        ));
+
+                        // Check that the app is correctly installed on the page
+                        $tabExist = $facebook->api('/'.$fbPage.'/tabs/'.$app->getAppId(), 'GET', array(
+                                'access_token'=> $pageAccessToken['access_token']
+                        ));
+                    }
+                    //it contains the whole path to the tab_id including the page_id...
+                    $tabId = $tabExist['data'][0]['id'];
+
+                    // update with the tab title and tab image
+                    // TEMP: code desactivated because generating curl error of type CURLE_BAD_FUNCTION_ARGUMENT (43)
+                    //       see http://curl.haxx.se/libcurl/c/libcurl-errors.html
+//                     $update = $facebook->api('/'.$tabId , 'POST', array(
+//                             'custom_name'     => $app->getPageTabTitle(),
+//                             // wtf : last comment https://developers.facebook.com/bugs/255313014574414/
+//                             //'custom_image_url'=> $app->getPageTabImage(),
+//                             'custom_image'    => '@' . 'public' . DIRECTORY_SEPARATOR . $app->getPageTabImage(),
+//                             'access_token'    => $pageAccessToken['access_token']
+//                     ));
+
+//                     // Check that the app is correctly installed on the page
+//                     $tabExist = $facebook->api('/'.$fbPage.'/tabs/'.$app->getAppId(), 'GET', array(
+//                             'access_token'=> $pageAccessToken['access_token']
+//                     ));
+
+                }
             }
-            //it contains the whole path to the tab_id including the page_id...
-            $tabId = $tabExist['data'][0]['id'];
 
-            // update with the tab title and tab image
-            $update = $facebook->api('/'.$tabId , 'POST', array(
-                    'custom_name'     => $app->getPageTabTitle(),
-                    // wtf : last comment https://developers.facebook.com/bugs/255313014574414/
-                    //'custom_image_url'=> $app->getPageTabImage(),
-                    'custom_image'    => '@' . 'public' . DIRECTORY_SEPARATOR . $app->getPageTabImage(),
-                    'access_token'    => $pageAccessToken['access_token']
-            ));
-
-            // Check that the app is correctly installed on the page
-            $tabExist = $facebook->api('/'.$fbPage.'/tabs/'.$app->getAppId(), 'GET', array(
-                'access_token'=> $pageAccessToken['access_token']
-            ));
             $app->setIsInstalled(true);
             $this->getAppMapper()->update($app);
+
         } else {
             $loginUrl = $facebook->getLoginUrl(
                 array(
@@ -495,18 +397,6 @@ class AppController extends AbstractActionController
         $appId = $this->getEvent()->getRouteMatch()->getParam('appId');
         $app = $this->getAppMapper()->findById($appId);
 
-        // Overwrite platform FB page with FB page associated to the app
-
-        $app_pages = $this->getAdminAppService()->getPagesForApp($app);
-
-        if (is_array($app_pages) && sizeof($app_pages)){
-            // TEMP : only one page per app
-            foreach ($app_pages as $app_page){
-                $page = $this->getPageMapper()->findById($app_page->getIdPage());
-                $fbPage = $page->getPageId();
-            }
-        }
-
         $user = null;
         // Create our Application instance with the FB App associated with the plateform
         $facebook = new \Facebook(array(
@@ -519,21 +409,35 @@ class AppController extends AbstractActionController
         $user = $facebook->getUser();
 
         if ($user) {
+
             $userAccessToken = $facebook->getAccessToken();
-            $pageAccessToken = $facebook->api('/'.$fbPage.'?fields=access_token', 'GET');
 
-            // Check that the app is correctly installed on the page
-            $tabExist = $facebook->api('/'.$fbPage.'/tabs/'.$app->getAppId(), 'GET', array(
-                    'access_token'=> $pageAccessToken['access_token']
-            ));
-            //it contains the whole path to the tab_id including the page_id...
-            $tabId = $tabExist['data'][0]['id'];
+            // For each FB page associated to the app :
 
-            if ($tabExist['data']) {
-                $delete = $facebook->api('/'.$tabId, 'DELETE', array(
-                    'access_token'=> $pageAccessToken['access_token']
-                ));
+            $pages = $app->getPages()->toArray();
+
+            if (is_array($pages) && sizeof($pages)){
+                foreach ($pages as $page){
+
+                    $fbPage = $page->getPageId();
+
+                    $pageAccessToken = $facebook->api('/'.$fbPage.'?fields=access_token', 'GET');
+
+                    // Check that the app is correctly installed on the page
+                    $tabExist = $facebook->api('/'.$fbPage.'/tabs/'.$app->getAppId(), 'GET', array(
+                            'access_token'=> $pageAccessToken['access_token']
+                    ));
+                    //it contains the whole path to the tab_id including the page_id...
+                    $tabId = $tabExist['data'][0]['id'];
+
+                    if ($tabExist['data']) {
+                        $delete = $facebook->api('/'.$tabId, 'DELETE', array(
+                                'access_token'=> $pageAccessToken['access_token']
+                        ));
+                    }
+                }
             }
+
             $app->setIsInstalled(false);
             $this->getAppMapper()->update($app);
 
@@ -594,22 +498,6 @@ class AppController extends AbstractActionController
     public function setPageMapper(PageMapperInterface $pageMapper)
     {
         $this->pageMapper = $pageMapper;
-
-        return $this;
-    }
-
-    public function getAppPageMapper()
-    {
-        if (null === $this->appPageMapper) {
-            $this->appPageMapper = $this->getServiceLocator()->get('playgroundfacebook_app_page_mapper');
-        }
-
-        return $this->appPageMapper;
-    }
-
-    public function setAppPageMapper(AppPageMapperInterface $appPageMapper)
-    {
-        $this->appPageMapper = $appPageMapper;
 
         return $this;
     }
