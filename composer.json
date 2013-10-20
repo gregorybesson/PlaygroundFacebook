@@ -18,19 +18,13 @@
 		"BSD-3-Clause"
 	],
 	"require" : {
-		"doctrine/doctrine-orm-module" : "*",
-		"zendframework/zend-stdlib" : "~2.1",
-		"facebook/php-sdk" : "3.*",
 		"php" : ">=5.3.3",
-		"zf-commons/zfc-base" : "0.*",
 		"zendframework/zend-mvc" : "~2.1",
 		"zendframework/zend-form" : "~2.1",
 		"zendframework/zend-loader" : "~2.1",
 		"zendframework/zend-servicemanager" : "~2.1",
 		"zendframework/zend-modulemanager" : "~2.1",
 		"zendframework/zend-stdlib" : "~2.1",
-		"doctrine/doctrine-orm-module" : "*",
-		"zf-commons/zfc-base" : "0.*",
 		"playground/core" : "dev-master",
         "facebook/php-sdk" : "3.*"
     }, 
