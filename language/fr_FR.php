@@ -54,7 +54,8 @@ return array(
 	'Delete' => 'Supprimer',
 	'Facebook admin page message' => 'Vous n\'êtes pas loggé à Facebook ou vous ne possédez pas les droits d\'administration sur les applis et pages gérées ici. Pour pouvoir profiter de l\'ensemble des fonctionnalités de la plateforme : ',
 	'Facebook admin page link' => 'Connectez-vous à Facebook en donnant les droits d\'administration à la plateforme',
-		
+	'Choose FB page(s)' => 'Choisir les pages Facebook',
+			
 	// Admin Apps create
 	'Create Appli' => 'Créer une application',
 	'Edit Appli' => 'Editer une application',

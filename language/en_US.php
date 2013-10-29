@@ -54,6 +54,7 @@ return array(
 	'Delete' => 'Delete',
 	'Facebook admin page message' => 'You are not logged in Facebook or you do not have administrative rights to run apps and pages here. To enjoy all the features of the platform:',
 	'Facebook admin page link' => 'Connect to Facebook giving administrative rights to the platform',
+	'Choose FB page(s)' => 'Choose FB page(s)',
 		
 	// Admin Apps create
 	'Create Appli' => 'Create Application',
