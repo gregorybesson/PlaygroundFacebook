@@ -192,7 +192,7 @@ class Page extends EventProvider implements ServiceManagerAwareInterface
                         }
                     }
                 }
-            } catch (FacebookApiException $e) {}
+            } catch (\FacebookApiException $e) {}
         }
 
         return $returnedFbPages;
@@ -252,7 +252,7 @@ class Page extends EventProvider implements ServiceManagerAwareInterface
                         $data['pageLink'] = $userFbPage['link'];
                     }
                 }
-            } catch (FacebookApiException $e) {}
+            } catch (\FacebookApiException $e) {}
         }
 
         return $data;
