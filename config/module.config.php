@@ -275,25 +275,25 @@ return array(
                 'privilege' => 'list',
                 'pages' => array(
                     'list' => array(
-                        'label' => 'Liste des Applis',
+                        'label' => 'Apps list',
                         'route' => 'admin/facebook/app/list',
                         'resource' => 'facebook',
                         'privilege' => 'list'
                     ),
                     'create' => array(
-                        'label' => 'Nouvelle Appli',
+                        'label' => 'New appli',
                         'route' => 'admin/facebook/app/create',
                         'resource' => 'facebook',
                         'privilege' => 'add'
                     ),
                     'list_pages' => array(
-                        'label' => 'Liste des Pages',
+                        'label' => 'Pages list',
                         'route' => 'admin/facebook/page/list',
                         'resource' => 'facebook',
                         'privilege' => 'list'
                     ),
                     'create_page' => array(
-                        'label' => 'Nouvelle Page',
+                        'label' => 'New page',
                         'route' => 'admin/facebook/page/create',
                         'resource' => 'facebook',
                         'privilege' => 'add'
