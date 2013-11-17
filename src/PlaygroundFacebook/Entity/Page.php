@@ -52,16 +52,6 @@ class Page implements InputFilterAwareInterface
     protected $pageLink;
 
     /**
-     * @ORM\Column(name="is_available", type="boolean")
-     */
-    protected $isAvailable = 1;
-
-    /**
-     * @ORM\Column(name="is_installed", type="boolean")
-     */
-    protected $isInstalled = 0;
-
-    /**
      * @ORM\Column(name="created_at", type="datetime")
      */
     protected $createdAt;
@@ -161,44 +151,6 @@ class Page implements InputFilterAwareInterface
     public function setPageLink($pageLink)
     {
         $this->pageLink = $pageLink;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIsAvailable()
-    {
-        return $this->isAvailable;
-    }
-
-    /**
-     * @param $isAvailable
-     * @return Block
-     */
-    public function setIsAvailable($isAvailable)
-    {
-        $this->isAvailable = $isAvailable;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIsInstalled()
-    {
-        return $this->isInstalled;
-    }
-
-    /**
-     * @param $isInstalled
-     * @return Page
-     */
-    public function setIsInstalled($isInstalled)
-    {
-        $this->isInstalled = $isInstalled;
 
         return $this;
     }

@@ -51,7 +51,7 @@ class AppController extends AbstractActionController
                 $userAccessToken = $facebookPtf->getAccessToken();
                 $pageAccessToken = $facebookPtf->api('/'.$fbPage.'?fields=access_token', 'GET');
 
-            } catch (FacebookApiException $e) {
+            } catch (\FacebookApiException $e) {
 
                 $fbLoginUrl = $facebookPtf->getLoginUrl(array('scope' => 'manage_pages'));
                 //error_log($e->getType());

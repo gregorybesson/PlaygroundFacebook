@@ -27,7 +27,7 @@ class Module
             $translate = $serviceManager->get('viewhelpermanager')->get('translate');
             $translate->getTranslator()->setLocale($locale);
         }
-        AbstractValidator::setDefaultTranslator($translator,'playgroundcore');
+        AbstractValidator::setDefaultTranslator($translator,'playgroundfacebook');
 
         // If cron is called, the $e->getRequest()->getPost() produces an error so I protect it with
         // this test
@@ -160,14 +160,16 @@ class Module
 
             $urlHelper = $e->getTarget()->getServiceManager()->get('viewhelpermanager')->get('Url');
 
-            if (! $fbDomain) {
-                $pageTabUrl = $urlHelper('frontend/' . $game->getClassType(), array('id' => $game->getIdentifier()), array('force_canonical' => true));
-            } else {
-                $pageTabUrl = 'http://' . $fbDomain . $urlHelper('frontend/' . $game->getClassType(), array('id' => $game->getIdentifier()));
-            }
+            // Don't use config channel anymore but URL "channel"
+            //if (! $fbDomain) {
+                $pageTabUrl = $urlHelper('frontend/' . $game->getClassType(), array('id' => $game->getIdentifier(), 'channel' => 'facebook'), array('force_canonical' => true));
+            //} else {
+            //    $pageTabUrl = 'http://' . $fbDomain . $urlHelper('frontend/' . $game->getClassType(), array('id' => $game->getIdentifier()));
+            //}
 
             // What a hack :(  wanted to change the scheme with the helper... Not that simple...
-            $securePageTabUrl = str_replace('http://', 'https://', $pageTabUrl);
+            // https URL in FB needs to end with a '/'
+            $securePageTabUrl = str_replace('http://', 'https://', $pageTabUrl) . '/';
 
             // I check if the game was not previously associated with another Fb app
             $previousApp = $appService->getAppMapper()->findOneBy(array('pageTabSourceType' => $game->getClassType(), 'pageTabSourceId' => $game->getId()));
@@ -211,7 +213,8 @@ class Module
                  array(
                      'page_tab_url'          => $app->getPageTabUrl(),
                      // Fu###ing FB bug : http://developers.facebook.com/bugs/312936975465098/
-                     'secure_page_tab_url'   => str_replace('https://', '',$app->getSecurePageTabUrl()),
+                     //'secure_page_tab_url'   => str_replace('https://', '',$app->getSecurePageTabUrl()),
+                     'secure_page_tab_url'   => $app->getSecurePageTabUrl(),
                      'page_tab_default_name' => $app->getPageTabTitle(),
                      'access_token'          => $accessToken
                  ));

@@ -202,7 +202,7 @@ class App extends EventProvider implements ServiceManagerAwareInterface
                         }
                     }
                 }
-            } catch (FacebookApiException $e) {}
+            } catch (\FacebookApiException $e) {}
         }
 
         return $returnedFbApps;
