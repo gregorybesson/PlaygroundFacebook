@@ -27,7 +27,7 @@ class Module
             $translate = $serviceManager->get('viewhelpermanager')->get('translate');
             $translate->getTranslator()->setLocale($locale);
         }
-        AbstractValidator::setDefaultTranslator($translator,'playgroundcore');
+        AbstractValidator::setDefaultTranslator($translator,'playgroundfacebook');
 
         // If cron is called, the $e->getRequest()->getPost() produces an error so I protect it with
         // this test
