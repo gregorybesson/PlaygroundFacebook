@@ -394,6 +394,8 @@ class App implements InputFilterAwareInterface
     public function setPublicationDate ($publicationDate)
     {
         $this->publicationDate = $publicationDate;
+        
+        return $this;
     }
 
     /**
@@ -412,6 +414,8 @@ class App implements InputFilterAwareInterface
     public function setCloseDate ($closeDate)
     {
         $this->closeDate = $closeDate;
+        
+        return $this;
     }
 
     /**
