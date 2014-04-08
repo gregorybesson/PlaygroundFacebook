@@ -17,7 +17,6 @@ class PageTest extends \PHPUnit_Framework_TestCase
         // Set fake data
         $this->formData = array(
                 'id'        => '0',
-                'pageIdRetrieved' => '555444333111',
         );
 
         parent::setUp();

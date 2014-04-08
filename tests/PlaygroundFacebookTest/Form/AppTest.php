@@ -18,7 +18,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->formData = array(
                 'id'        => '0',
                 'appId'     => '111222333444555',
-                'appIdRetrieved' => '555444333111',
+                'appName'   => 'test',
                 'appSecret' => 'absh56yh2d4zd196hsy6hy54gqt99k2s',
         );
 
