@@ -9,7 +9,7 @@ return array(
 //     	'AsseticBundle',
     	'ZfcBase',
    		'PlaygroundCore',
-//         'PlaygroundDesign',
+        'PlaygroundDesign',
     	'PlaygroundFacebook',
     ),
     'module_listener_options' => array(
