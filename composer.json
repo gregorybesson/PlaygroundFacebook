@@ -21,7 +21,7 @@
 		"php" : ">=5.3.3",
 		"zendframework/zendframework" : "2.*",
 		"playground/core" : "dev-master",
-		"playground/design" : "dev-master"
+		"playground/design" : "dev-master",
         "facebook/php-sdk" : "3.*"
     }, 
     "require-dev" : {
