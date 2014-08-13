@@ -14,6 +14,13 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $this->sm = Bootstrap::getServiceManager();
+        $this->em = $this->sm->get('doctrine.entitymanager.orm_default');
+        $tool = new \Doctrine\ORM\Tools\SchemaTool($this->em);
+        $classes = $this->em->getMetadataFactory()->getAllMetadata();
+        $tool->dropSchema($classes);
+        $tool->createSchema($classes);
+        
         // Set fake data
         $this->formData = array(
                 'id'        => '0',
