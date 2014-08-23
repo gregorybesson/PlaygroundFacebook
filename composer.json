@@ -17,11 +17,12 @@
 	"license" : [
 		"BSD-3-Clause"
 	],
+	"minimum-stability" : "dev",
 	"require" : {
 		"php" : ">=5.3.3",
 		"zendframework/zendframework" : "2.*",
-		"playground/core" : "dev-master",
-		"playground/design" : "dev-master",
+		"playground/core" : "2.*",
+		"playground/design" : "2.*",
         "facebook/php-sdk" : "3.*"
     }, 
     "require-dev" : {
@@ -32,5 +33,9 @@
 			"PlaygroundFacebook" : "src/"
 		}
 	},
-	"minimum-stability" : "dev"
+	"extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev"
+        }
+    }
 }
