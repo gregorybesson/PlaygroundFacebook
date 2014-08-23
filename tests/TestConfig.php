@@ -4,12 +4,9 @@ return array(
         'DoctrineModule',
     	'DoctrineORMModule',
    		'DoctrineDataFixtureModule',
-//    		'ZendDeveloperTools',
-//    		'Jhu\ZdtLoggerModule',
-//     	'AsseticBundle',
     	'ZfcBase',
    		'PlaygroundCore',
-//         'PlaygroundDesign',
+        'PlaygroundDesign',
     	'PlaygroundFacebook',
     ),
     'module_listener_options' => array(

@@ -15,6 +15,30 @@ return array(
             )
         )
     ),
+    'bjyauthorize' => array(
+    
+        'resource_providers' => array(
+            'BjyAuthorize\Provider\Resource\Config' => array(
+                'facebook'      => array(),
+            ),
+        ),
+    
+        'rule_providers' => array(
+            'BjyAuthorize\Provider\Rule\Config' => array(
+                'allow' => array(
+                    array(array('admin'), 'facebook',       array('list','add','edit','delete')),
+                ),
+            ),
+        ),
+    
+        'guards' => array(
+            'BjyAuthorize\Guard\Controller' => array(
+                // Admin area
+                array('controller' => 'playgroundfacebook_admin_app',                           'roles' => array('admin')),
+                array('controller' => 'playgroundfacebook_admin_page',                          'roles' => array('admin')),
+            ),
+        ),
+    ),
 
     'translator' => array(
         'locale' => 'fr_FR',

@@ -4,8 +4,8 @@ namespace PlaygroundFacebook\Form;
 
 use Zend\Form\Form;
 use Zend\Form\Element;
+use Zend\Mvc\I18n\Translator;
 use ZfcBase\Form\ProvidesEventsForm;
-use Zend\I18n\Translator\Translator;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use Zend\ServiceManager\ServiceManager;
 
