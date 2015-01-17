@@ -273,20 +273,24 @@ return array(
     ),
 
     'core_layout' => array(
-        'PlaygroundFacebook' => array(
-            'default_layout' => 'layout/2columns-left',
-            'children_views' => array(
-                'col_left' => 'playground-user/user/col-user.phtml'
-            ),
-            'controllers' => array(
-                'playgroundfacebook_admin_app' => array(
-                    'default_layout' => 'layout/admin'
-                ),
-                'playgroundfacebook_admin_page' => array(
-                    'default_layout' => 'layout/admin'
+        'frontend' => array(
+            'modules' => array(
+                'PlaygroundFacebook' => array(
+                    'default_layout' => 'layout/2columns-left',
+                    'children_views' => array(
+                        'col_left' => 'playground-user/user/col-user.phtml'
+                    ),
+                    'controllers' => array(
+                        'playgroundfacebook_admin_app' => array(
+                            'default_layout' => 'layout/admin'
+                        ),
+                        'playgroundfacebook_admin_page' => array(
+                            'default_layout' => 'layout/admin'
+                        )
+                    )
                 )
-            )
-        )
+            ),
+        ),
     ),
 
     'navigation' => array(
