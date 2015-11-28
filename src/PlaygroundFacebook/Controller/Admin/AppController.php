@@ -40,19 +40,17 @@ class AppController extends AbstractActionController
 
         if ($user) {
             try {
-
                 $userFbAccounts = $facebookPtf->api('/me/accounts', 'GET');
 
                 $userFbApps = $facebookPtf->api('/me/applications/developer', 'GET');
 
-                $user_profile =  $facebookPtf->api('/me','GET');
+                $user_profile =  $facebookPtf->api('/me', 'GET');
                 $fbLogged = true;
 
                 $userAccessToken = $facebookPtf->getAccessToken();
                 $pageAccessToken = $facebookPtf->api('/'.$fbPage.'?fields=access_token', 'GET');
 
             } catch (\FacebookApiException $e) {
-
                 $fbLoginUrl = $facebookPtf->getLoginUrl(array('scope' => 'manage_pages'));
                 //error_log($e->getType());
                 //error_log($e->getMessage());
@@ -77,14 +75,16 @@ class AppController extends AbstractActionController
 
             // Application details available to all (Don't have to be logged to Facebook as Admin)
             try {
-                $app_details = $facebook->api('/'.$app->getAppId(), 'GET',
+                $app_details = $facebook->api(
+                    '/'.$app->getAppId(),
+                    'GET',
                     array(
                         'access_token' => $accessToken
                     )
                 );
 
                 // Persist the app name into the database
-                if (isset($app_details['name'])){
+                if (isset($app_details['name'])) {
                     $app->setAppName($app_details['name']);
                     $appMapper->update($app);
                 }
@@ -104,7 +104,7 @@ class AppController extends AbstractActionController
             $app_details['pages_number'] = '';
 
             $pages = $app->getPages()->toArray();
-            if (is_array($pages) && sizeof($pages)){
+            if (is_array($pages) && sizeof($pages)) {
                 $app_details['has_pages'] = true;
                 $app_details['pages_number'] = sizeof($pages);
             }
@@ -184,9 +184,9 @@ class AppController extends AbstractActionController
 
         $userFbAppsOptions = array();
 
-        if (isset($appsFromFacebook['apps_from_developer']) && sizeof($appsFromFacebook['apps_from_developer'])){
+        if (isset($appsFromFacebook['apps_from_developer']) && sizeof($appsFromFacebook['apps_from_developer'])) {
             $tmpApps = array();
-            foreach ($appsFromFacebook['apps_from_developer'] as $app){
+            foreach ($appsFromFacebook['apps_from_developer'] as $app) {
                 $tmpApps[$app['id']] = $app['id'] . ' - ' . $app['name'];
             }
             $userFbAppsOptions['apps_from_developper'] = array(
@@ -194,15 +194,14 @@ class AppController extends AbstractActionController
                 'options' => $tmpApps
             );
         }
-        if (isset($appsFromFacebook['apps_from_pages']) && sizeof($appsFromFacebook['apps_from_pages'])){
+        if (isset($appsFromFacebook['apps_from_pages']) && sizeof($appsFromFacebook['apps_from_pages'])) {
             $tmpApps = array();
             $previousPageId = $appsFromFacebook['apps_from_pages'][0]['page_id'];
             $previousPageName = $appsFromFacebook['apps_from_pages'][0]['page_name'];
             $isAdded = false;
-            foreach ($appsFromFacebook['apps_from_pages'] as $app){
-
-                if(isset($app['id'])){
-                    if ($previousPageId != $app['page_id']){
+            foreach ($appsFromFacebook['apps_from_pages'] as $app) {
+                if (isset($app['id'])) {
+                    if ($previousPageId != $app['page_id']) {
                         $userFbAppsOptions['page_'.$previousPageId] = array(
                                 'label' => 'Page ' . $previousPageName,
                                 'options' => $tmpApps
@@ -215,7 +214,7 @@ class AppController extends AbstractActionController
                     $tmpApps[$app['id']] = $app['id'] . ' - ' . $app['name'];
                 }
             }
-            if (!$isAdded){
+            if (!$isAdded) {
                 $userFbAppsOptions['page_'.$app['id']] = array(
                         'label' => 'Page ' . $app['name'],
                         'options' => $tmpApps
@@ -223,7 +222,7 @@ class AppController extends AbstractActionController
             }
         }
 
-        if (sizeof($userFbAppsOptions)){
+        if (sizeof($userFbAppsOptions)) {
             $form->get('appIdRetrieved')->setValueOptions($userFbAppsOptions);
         }
 
@@ -316,16 +315,14 @@ class AppController extends AbstractActionController
         $user = $facebook->getUser();
 
         if ($user) {
-
             $userAccessToken = $facebook->getAccessToken();
 
             // For each FB page associated to the app :
 
             $pages = $app->getPages()->toArray();
 
-            if (is_array($pages) && sizeof($pages)){
-                foreach ($pages as $page){
-
+            if (is_array($pages) && sizeof($pages)) {
+                foreach ($pages as $page) {
                     $fbPage = $page->getPageId();
 
                     $pageAccessToken = $facebook->api('/'.$fbPage.'?fields=access_token', 'GET');
@@ -409,16 +406,14 @@ class AppController extends AbstractActionController
         $user = $facebook->getUser();
 
         if ($user) {
-
             $userAccessToken = $facebook->getAccessToken();
 
             // For each FB page associated to the app :
 
             $pages = $app->getPages()->toArray();
 
-            if (is_array($pages) && sizeof($pages)){
-                foreach ($pages as $page){
-
+            if (is_array($pages) && sizeof($pages)) {
+                foreach ($pages as $page) {
                     $fbPage = $page->getPageId();
 
                     $pageAccessToken = $facebook->api('/'.$fbPage.'?fields=access_token', 'GET');
@@ -443,7 +438,7 @@ class AppController extends AbstractActionController
 
         } else {
             $loginUrl = $facebook->getLoginUrl(
-                    array(
+                array(
                             'scope' => 'manage_pages'
                     )
             );

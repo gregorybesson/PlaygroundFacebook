@@ -57,5 +57,4 @@ class PageTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->getForm()->isValid());
 
     }
-
 }

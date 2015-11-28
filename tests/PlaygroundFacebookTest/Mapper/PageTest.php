@@ -7,6 +7,7 @@ use \PlaygroundFacebook\Entity\Page as PageEntity;
 
 class PageTest extends \PHPUnit_Framework_TestCase
 {
+
     protected $traceError = true;
 
     /**
@@ -114,6 +115,4 @@ class PageTest extends \PHPUnit_Framework_TestCase
         $page = $this->em->getRepository('PlaygroundFacebook\Entity\Page')->find($id);
         $this->assertEquals($page, null);
     }
-
-
 }

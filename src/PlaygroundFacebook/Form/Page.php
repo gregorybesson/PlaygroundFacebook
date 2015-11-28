@@ -166,5 +166,4 @@ class Page extends ProvidesEventsForm
 
 //         return $appsArray;
 //     }
-
 }

@@ -27,7 +27,7 @@ class Module
             $translate = $serviceManager->get('viewhelpermanager')->get('translate');
             $translate->getTranslator()->setLocale($locale);
         }
-        AbstractValidator::setDefaultTranslator($translator,'playgroundfacebook');
+        AbstractValidator::setDefaultTranslator($translator, 'playgroundfacebook');
 
         // If cron is called, the $e->getRequest()->getPost() produces an error so I protect it with
         // this test
@@ -92,7 +92,7 @@ class Module
      * @param  EventManager $e
      * @return array
      */
-    public function populateAppIds ($e)
+    public function populateAppIds($e)
     {
         $appsArray = $e->getParam('apps');
 
@@ -103,10 +103,10 @@ class Module
 
         foreach ($apps as $app) {
             $app_label = '';
-            if ($app->getAppName()){
+            if ($app->getAppName()) {
                 $app_label .= $app->getAppName();
             }
-            if ($app->getAppId()){
+            if ($app->getAppId()) {
                 $app_label .= ' ('.$app->getAppId().')';
             }
             $appsArray[$app->getAppId()] = $app_label;
@@ -120,7 +120,7 @@ class Module
      * @param  EventManager $e
      * @return array
      */
-    public function validateApp ($e)
+    public function validateApp($e)
     {
         $game = $e->getParam('game');
         $data = $e->getParam('data');
@@ -145,27 +145,16 @@ class Module
         return true;
     }
 
-    public function updateApp ($e)
+    public function updateApp($e)
     {
         $game       = $e->getParam('game');
         $appService = $e->getTarget()->getServiceManager()->get('playgroundfacebook_app_service');
         $config     = $e->getTarget()->getServiceManager()->get('config');
-        $fbDomain   = false;
-        if (isset($config['channel']) && isset($config['channel']['facebook']) ) {
-            $fbDomain = $config['channel']['facebook'];
-        }
 
         // I create or update the facebook association with the game
         if ($game->getFbAppId()) {
-
             $urlHelper = $e->getTarget()->getServiceManager()->get('viewhelpermanager')->get('Url');
-
-            // Don't use config channel anymore but URL "channel"
-            //if (! $fbDomain) {
-                $pageTabUrl = $urlHelper('frontend/' . $game->getClassType(), array('id' => $game->getIdentifier(), 'channel' => 'facebook'), array('force_canonical' => true));
-            //} else {
-            //    $pageTabUrl = 'http://' . $fbDomain . $urlHelper('frontend/' . $game->getClassType(), array('id' => $game->getIdentifier()));
-            //}
+            $pageTabUrl = $urlHelper('frontend/' . $game->getClassType(), array('id' => $game->getIdentifier()), array('force_canonical' => true));
 
             // What a hack :(  wanted to change the scheme with the helper... Not that simple...
             // https URL in FB needs to end with a '/'
@@ -209,15 +198,18 @@ class Module
                 // WtF ??? getApplicationAccessToken is protected :( have to build the token by myself !
                 $accessToken = $facebook->getAppId() . '|' . $facebook->getApiSecret();
 
-                $install = $facebook->api('/'.$app->getAppId(), 'POST',
-                 array(
+                $install = $facebook->api(
+                    '/'.$app->getAppId(),
+                    'POST',
+                    array(
                      'page_tab_url'          => $app->getPageTabUrl(),
                      // Fu###ing FB bug : http://developers.facebook.com/bugs/312936975465098/
                      //'secure_page_tab_url'   => str_replace('https://', '',$app->getSecurePageTabUrl()),
                      'secure_page_tab_url'   => $app->getSecurePageTabUrl(),
                      'page_tab_default_name' => $app->getPageTabTitle(),
                      'access_token'          => $accessToken
-                 ));
+                    )
+                );
             }
         } else {
             // I remove Facebook association with the game if any
@@ -277,7 +269,7 @@ class Module
                         $sm->get('playgroundfacebook_module_options')
                     );
                 },
-                'playgroundfacebook_app_form' => function($sm) {
+                'playgroundfacebook_app_form' => function ($sm) {
                     $translator = $sm->get('translator');
                     $options = $sm->get('playgroundfacebook_module_options');
                     $form = new Form\App(null, $sm, $translator);
@@ -287,19 +279,19 @@ class Module
                     return $form;
                 },
                 'playgroundfacebook_page_mapper' => function ($sm) {
-                return new \PlaygroundFacebook\Mapper\Page(
+                    return new \PlaygroundFacebook\Mapper\Page(
                         $sm->get('playgroundfacebook_doctrine_em'),
                         $sm->get('playgroundfacebook_module_options')
-                );
+                    );
                 },
-                'playgroundfacebook_page_form' => function($sm) {
-                $translator = $sm->get('translator');
-                $options = $sm->get('playgroundfacebook_module_options');
-                $form = new Form\Page(null, $sm, $translator);
-                $page = new Entity\Page();
-                $form->setInputFilter($page->getInputFilter());
+                'playgroundfacebook_page_form' => function ($sm) {
+                    $translator = $sm->get('translator');
+                    $options = $sm->get('playgroundfacebook_module_options');
+                    $form = new Form\Page(null, $sm, $translator);
+                    $page = new Entity\Page();
+                    $form->setInputFilter($page->getInputFilter());
 
-                return $form;
+                    return $form;
                 },
 //                 'playgroundfacebook_app_page_mapper' => function ($sm) {
 //                 return new \PlaygroundFacebook\Mapper\AppPage(

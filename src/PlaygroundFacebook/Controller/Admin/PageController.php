@@ -25,9 +25,9 @@ class PageController extends AbstractActionController
         $fbLoginUrl          = '';
         $paginator           = array();
         $pages_array         = array();
-        $user = null;
+        $user                = null;
 
-        // Create our Application instance with the FB App associated with the plateform
+        // Create our Application instance with the FB App associated with the platform
         $facebookPtf = new \Facebook(array(
             'appId' => $platformFbAppId,
             'secret' => $platformFbAppSecret,
@@ -38,17 +38,15 @@ class PageController extends AbstractActionController
 
         // Retrieve and update information about registered pages (if admin user is connected to Facebook)
 
-        if ($user){
-
+        if ($user) {
             $fbLogged = true;
             foreach ($pages as $page) {
+                $page_info = $this->getAdminPageService()->getPageInfoFromFacebookAccount(array('pageId' => $page->getPageId()));
 
-                $page_info = $this->getAdminPageService()->getPageInfoFromFacebookAccount( array('pageId' => $page->getPageId()));
-
-                if (isset($page_info['pageName'])){
+                if (isset($page_info['pageName'])) {
                     $page->setPageName($page_info['pageName']);
                 }
-                if (isset($page_info['pageLink'])){
+                if (isset($page_info['pageLink'])) {
                     $page->setPageLink($page_info['pageLink']);
                 }
                 $this->getPageMapper()->update($page);
@@ -60,11 +58,10 @@ class PageController extends AbstractActionController
         // Build Facebook login URL (if admin user is not connected to Facebook)
 
         } else {
-
             $fbLoginUrl = $facebookPtf->getLoginUrl(array('scope' => 'manage_pages'));
         }
 
-        foreach ($pages as $page){
+        foreach ($pages as $page) {
             $pages_array[] = $page->getArrayCopy();
         }
 
@@ -99,11 +96,10 @@ class PageController extends AbstractActionController
         $userFbPagesOptions = array();
 
         foreach ($pagesFromFacebook as $page) {
-
             $userFbPagesOptions[$page['pageId']] = $page['pageName'] . ' - '.$page['pageId'];
         }
 
-        if (sizeof($userFbPagesOptions)){
+        if (sizeof($userFbPagesOptions)) {
             $form->get('pageIdRetrieved')->setValueOptions($userFbPagesOptions);
         }
 
@@ -115,7 +111,6 @@ class PageController extends AbstractActionController
         $request = $this->getRequest();
 
         if ($request->isPost()) {
-
             $data = $request->getPost()->toArray();
             // Get more information about the page, from Facebook (if admin user is connected to Facebook)
 

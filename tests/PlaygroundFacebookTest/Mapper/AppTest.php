@@ -7,6 +7,7 @@ use \PlaygroundFacebook\Entity\App as AppEntity;
 
 class AppTest extends \PHPUnit_Framework_TestCase
 {
+
     protected $traceError = true;
 
     /**
@@ -148,7 +149,4 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $app = $this->em->getRepository('PlaygroundFacebook\Entity\App')->find($id);
         $this->assertEquals($app, null);
     }
-
-
-
 }
