@@ -7,6 +7,7 @@ use \PlaygroundFacebook\Entity\Page as PageEntity;
 
 class PageTest extends \PHPUnit_Framework_TestCase
 {
+
     protected $traceError = true;
 
     protected $pageData;
@@ -44,6 +45,4 @@ class PageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->pageData['pageName'], $app->getPageName());
 
     }
-
-
 }

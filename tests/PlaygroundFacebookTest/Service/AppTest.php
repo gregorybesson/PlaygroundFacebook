@@ -102,13 +102,11 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function getAppService()
     {
-       if (null === $this->appService) {
+        if (null === $this->appService) {
             $sm = Bootstrap::getServiceManager();
             $this->appService = $sm->get('playgroundfacebook_app_service');
         }
 
         return $this->appService;
     }
-
-
 }

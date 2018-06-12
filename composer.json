@@ -22,7 +22,7 @@
 		"php" : ">=5.3.3",
 		"zendframework/zendframework" : "2.*",
 		"playground/core" : "2.*",
-		"playground/design" : "2.*",
+		"playground/design" : ">=3.0.0",
         "facebook/php-sdk" : "3.*"
     }, 
     "require-dev" : {

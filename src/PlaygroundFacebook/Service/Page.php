@@ -89,7 +89,7 @@ class Page extends EventProvider implements ServiceManagerAwareInterface
         $form = $this->getServiceManager()->get('playgroundfacebook_page_form');
 //         $form->setHydrator(new ClassMethods());
 
-        if (!isset($data['apps'])){
+        if (!isset($data['apps'])) {
             $data['apps'] = array();
         }
 
@@ -170,9 +170,7 @@ class Page extends EventProvider implements ServiceManagerAwareInterface
         // Try to retrieve pages from Facebook, if user is connected to Facebook
 
         if ($user) {
-
             try {
-
                 // Retrieve pages administred by the user
 
                 $userFbPages = $facebookPtf->api('/me/accounts?fields=id,name,link', 'GET');
@@ -180,9 +178,7 @@ class Page extends EventProvider implements ServiceManagerAwareInterface
                 if (isset($userFbPages['data']) && is_array($userFbPages['data'])) {
                     foreach ($userFbPages['data'] as $userFbPage) {
                         if (array_key_exists('id', $userFbPage)) {
-
-                            if (! array_key_exists($userFbPage['id'], $registeredFbPages)) { // ignore pages already persisted in Playground
-
+                            if (! array_key_exists($userFbPage['id'], $registeredFbPages)) {
                                 $returnedFbPages[] = array(
                                     'pageId' => $userFbPage['id'],
                                     'pageName' => array_key_exists('id', $userFbPage) ? $userFbPage['name'] : '',
@@ -193,7 +189,6 @@ class Page extends EventProvider implements ServiceManagerAwareInterface
                     }
                 }
             } catch (\FacebookApiException $e) {
-                
             }
         }
 
@@ -226,7 +221,8 @@ class Page extends EventProvider implements ServiceManagerAwareInterface
 
         $pageId = '';
         if (isset($data['pageId']) && $data['pageId']) {
-            $pageId = $data['pageId'];;
+            $pageId = $data['pageId'];
+            ;
         }
         if (isset($data['pageIdRetrieved']) && $data['pageIdRetrieved']) {
             $pageId = $data['pageIdRetrieved'];
@@ -238,15 +234,12 @@ class Page extends EventProvider implements ServiceManagerAwareInterface
         // Try to retrieve page info from Facebook, if user is connected to Facebook
 
         if ($user) {
-
             try {
-
                 // Retrieve pages administred by the user
 
                 $userFbPage = $facebookPtf->api('/' . $pageId . '?fields=id,name,link', 'GET');
 
                 if (isset($userFbPage) && is_array($userFbPage)) {
-
                     if (array_key_exists('name', $userFbPage)) {
                         $data['pageName'] = $userFbPage['name'];
                     }
@@ -254,7 +247,8 @@ class Page extends EventProvider implements ServiceManagerAwareInterface
                         $data['pageLink'] = $userFbPage['link'];
                     }
                 }
-            } catch (\FacebookApiException $e) {}
+            } catch (\FacebookApiException $e) {
+            }
         }
 
         return $data;

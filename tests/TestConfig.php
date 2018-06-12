@@ -2,12 +2,12 @@
 return array(
     'modules' => array(
         'DoctrineModule',
-    	'DoctrineORMModule',
-   		'DoctrineDataFixtureModule',
-    	'ZfcBase',
-   		'PlaygroundCore',
+        'DoctrineORMModule',
+        'DoctrineDataFixtureModule',
+        'ZfcBase',
+        'PlaygroundCore',
         'PlaygroundDesign',
-    	'PlaygroundFacebook',
+        'PlaygroundFacebook',
     ),
     'module_listener_options' => array(
         'config_glob_paths'    => array(

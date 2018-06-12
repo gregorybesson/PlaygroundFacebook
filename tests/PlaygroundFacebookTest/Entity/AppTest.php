@@ -7,6 +7,7 @@ use \PlaygroundFacebook\Entity\App as AppEntity;
 
 class AppTest extends \PHPUnit_Framework_TestCase
 {
+
     protected $traceError = true;
 
     protected $appData;
@@ -44,6 +45,4 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->appData['appSecret'], $app->getAppSecret());
 
     }
-
-
 }

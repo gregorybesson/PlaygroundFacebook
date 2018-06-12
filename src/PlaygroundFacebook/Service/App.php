@@ -76,7 +76,7 @@ class App extends EventProvider implements ServiceManagerAwareInterface
 //         $form->setHydrator(new ClassMethods());
         $form->bind($app);
 
-        if (!isset($data['pages'])){
+        if (!isset($data['pages'])) {
             $data['pages'] = array();
         }
 
@@ -159,9 +159,7 @@ class App extends EventProvider implements ServiceManagerAwareInterface
         // Try to retrieve apps from Facebook, if user is connected to Facebook
 
         if ($user) {
-
             try {
-
                 // Retrieve apps administred by the user, if the Facebook account is a developer account
 
                 $userFbApps = $facebookPtf->api('/me/applications/developer', 'GET');
@@ -202,7 +200,8 @@ class App extends EventProvider implements ServiceManagerAwareInterface
                         }
                     }
                 }
-            } catch (\FacebookApiException $e) {}
+            } catch (\FacebookApiException $e) {
+            }
         }
 
         return $returnedFbApps;

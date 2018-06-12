@@ -382,7 +382,7 @@ class App implements InputFilterAwareInterface
      *
      * @return the $publicationDate
      */
-    public function getPublicationDate ()
+    public function getPublicationDate()
     {
         return $this->publicationDate;
     }
@@ -391,7 +391,7 @@ class App implements InputFilterAwareInterface
      *
      * @param field_type $publicationDate
      */
-    public function setPublicationDate ($publicationDate)
+    public function setPublicationDate($publicationDate)
     {
         $this->publicationDate = $publicationDate;
         
@@ -402,7 +402,7 @@ class App implements InputFilterAwareInterface
      *
      * @return the $closeDate
      */
-    public function getCloseDate ()
+    public function getCloseDate()
     {
         return $this->closeDate;
     }
@@ -411,7 +411,7 @@ class App implements InputFilterAwareInterface
      *
      * @param field_type $closeDate
      */
-    public function setCloseDate ($closeDate)
+    public function setCloseDate($closeDate)
     {
         $this->closeDate = $closeDate;
         
