@@ -9,7 +9,7 @@
 		}
 	],
 	"keywords" : [
-		"zf2",
+		"zf3",
 		"playground",
 		"Facebook"
 	],
@@ -19,10 +19,10 @@
 	],
 	"minimum-stability" : "dev",
 	"require" : {
-		"php" : ">=5.3.3",
-		"zendframework/zendframework" : "2.*",
-		"playground/core" : "2.*",
-		"playground/design" : ">=3.0.0",
+		"php" : ">=7.0.0",
+		"zendframework/zendframework" : ">=3.0.0",
+		"playground/core" : ">=4.0.0",
+		"playground/design" : ">=4.0.0",
         "facebook/php-sdk" : "3.*"
     }, 
     "require-dev" : {
